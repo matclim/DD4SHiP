@@ -1,0 +1,7 @@
+  <define>
+    <constant name="world_side" value="30000*mm"/>
+    <constant name="world_x" value="world_side"/>
+    <constant name="world_y" value="world_side"/>
+    <constant name="world_z" value="world_side"/>
+
+  </define>
