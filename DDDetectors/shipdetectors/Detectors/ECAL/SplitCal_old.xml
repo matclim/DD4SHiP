@@ -24,9 +24,9 @@
 
   <!--  Definition of the used visualization attributes    -->
   <display>
-    <vis name="SplitCalSensitiveVis"    alpha="0.8" r="0.0"  g="1.0"  b="0.0"  showDaughters="true" visible="true"/>
-    <vis name="SplitCalAbsorberVis"     alpha="1.0" r="1.0"  g="0.0"  b="0.0"  showDaughters="true" visible="true"/>
-    <vis name="TransparentVis"     alpha="0.0" r="0.4"  g="0.4"  b="0.0"  showDaughters="true" visible="false"/>
+    <vis name="SplitCalSensitiveVis"    alpha="0.8" r="0.0"  g="1.0"  b="0.0"  showDaughters="false" visible="true"/>
+    <vis name="SplitCalAbsorberVis"     alpha="1.0" r="1.0"  g="0.0"  b="0.0"  showDaughters="false" visible="true"/>
+    <vis name="TransparentVis"     alpha="0.0" r="0.4"  g="0.4"  b="0.0"  showDaughters="false" visible="false"/>
   </display>
 
   <!--  Definition of the readout segmentation/definition  -->
@@ -38,7 +38,7 @@
   </readouts>
 
   <!--  Includes for sensitives and support                -->
-  <include ref="SplitCalBars.xml"/>
+  <include ref="SplitCalTest.xml"/>
 <!--
 -->
 </lccdd>

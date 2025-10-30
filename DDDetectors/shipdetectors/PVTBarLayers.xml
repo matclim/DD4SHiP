@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lccdd>
+  <info name="PVTBarLayers"
+        title="PVT bars interleaved with lead"
+        author="Matei Climescu"
+        status="development"
+        version="1.0">
+    <comment>Stack of PVT bar layers (configurable) interleaved with lead.</comment>
+  </info>
+
+  <includes>
+    <gdmlFile ref="../shipdetectors/elements.xml"/>
+    <gdmlFile ref="../shipdetectors/materials.xml"/>
+  </includes>
+
+  <define>
+    <include ref="SHiPConstants.xml"/>
+  </define>
+
+
+  <define>
+    <!-- Choose one of the bar configurations below by commenting/uncommenting -->
+    <!-- Configuration A: 36 bars @ 6 cm -->
+    <constant name="bar_width" value="6*cm"/>
+    <constant name="num_bars"  value="36"/>
+
+    <!-- Configuration B: 216 bars @ 1 cm -->
+    <!-- <constant name="bar_width" value="1*cm"/> -->
+    <!-- <constant name="num_bars"  value="216"/> -->
+
+    <constant name="bar_length" value="216*cm"/>
+    <constant name="bar_thickness" value="1*cm"/>  <!-- thickness in z per PVT layer -->
+    <constant name="lead_thickness" value="2*mm"/> <!-- lead sheet thickness (changeable) -->
+
+    <!-- how many PVT layers (each PVT layer will be followed by a lead layer).
+         Total stacks = n_layers * 2 (PVT + lead). -->
+    <constant name="n_layers" value="8"/>
+
+    <!-- optional rotations: 'true' will alternate layer rotation by 90 degrees each layer -->
+    <constant name="alternate_rotation" value="1"/>
+
+    <!-- XY envelope padding -->
+    <constant name="pad" value="2*mm"/>
+
+  </define>
+
+  <display>
+    <vis name="Invisible" showDaughters="false" visible="false"/>
+    <vis name="VisiblePVT" alpha="1.0" r="0.0" g="1.0" b="0.0" showDaughters="true" visible="true"/>
+    <vis name="VisibleLead" alpha="1.0" r="0.5" g="0.5" b="0.5" showDaughters="true" visible="true"/>
+  </display>
+
+  <detectors>
+    <detector id="100" name="PVTBarLayersDet" type="DD4hep_PVTBarLayers" vis="Invisible">
+      <!-- important parameters consumed by the C++ factory -->
+      <dimension name="bar_width"   value="${bar_width}"/>
+      <dimension name="num_bars"    value="${num_bars}"/>
+      <dimension name="bar_length"  value="${bar_length}"/>
+      <dimension name="bar_thickness" value="${bar_thickness}"/>
+      <dimension name="lead_thickness" value="${lead_thickness}"/>
+      <dimension name="n_layers"    value="${n_layers}"/>
+      <dimension name="pad"         value="${pad}"/>
+      <parameter name="alternate_rotation" value="${alternate_rotation}"/>
+      <position x="0*mm" y="0*mm" z="0*mm"/>
+      <rotation x="0" y="0" z="0"/>
+      <region ref="DefaultRegion"/>
+      <vis ref="Invisible"/>
+    </detector>
+  </detectors>
+
+  <readouts>
+    <readout name="PVTBarHits">
+      <id>system:8,layer:16,bar:16</id>
+    </readout>
+  </readouts>
+
+</lccdd>
