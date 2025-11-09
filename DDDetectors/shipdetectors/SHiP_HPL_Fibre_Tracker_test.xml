@@ -64,7 +64,10 @@
       <core vis="VisibleGreen">
         <material name="PVT"/>
         <non_sensitive/>
-      </core>
+	</core>
+	<modulesupport z = "1*cm" x= "2.16*m" y= "2.16*m" vis="VisibleGray">
+        <material name="AluminiumPlate"/>
+	</modulesupport>
       <position x="0*m"   y="0*m"   z="0*m"/>
       <rotation x="0"     y="0"     z="0"/>
     </detector>

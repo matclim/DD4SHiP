@@ -8,10 +8,10 @@
 <!-- ====================================================================== -->
 
 <detectors>
-  <detector id=0 name="SplitCalTest_SLayer_0" type="DD4hep_SplitCal" reflect="true" readout="SplitCalHits" vis="SplitCalVis" calorimeterType="EM" splitlayer= "10" layer_codes="1234123412341234123412341234123412341234">
+  <detector id=0 name="SplitCalTest_SLayer_0" type="DD4hep_SplitCal" reflect="true" readout="SplitCalHits" vis="SplitCalVis" calorimeterType="EM" splitlayer= "13" layer_codes="1234123412345612341234561234561234123412341234" hpln_fibre_layers="3">
     <comment>SplitCal test</comment>
     <box x="216*cm" y="216*cm" z="2*m" repeat="1" vis="InvisibleWithDaughters" >
-    </box>      
+    <box>      
     <widebar x="6*cm" y="2.16*m" z="3*cm" num_x="36" x_spacing="12*cm" z_spacing="2.56*cm" extrazgap="0*cm" vis="SplitCalWideSensitiveVis" >
       <material name = "PVT" sensitive = "true">
       </material>
@@ -20,6 +20,18 @@
       <material name = "PVT" sensitive = "true">
       </material>
     </thinbar>       
+    <hplbox x="2.16*m" y="2.16*m" z="1*cm" num_x="216" extrazgap="0*cm" vis="SplitCalHPLVis">
+      <material name = "Air" sensitive = "false">
+      </material>
+    </hplbox>       
+    <hplfibre rmax="0.6*mm" y="2.16*m" z="3.6*mm" thickness="0.2*mm" num_x="216" extrazgap="0*cm" vis="SplitCalHPLVis">
+      <material name = "Polysterene" sensitive = "false">
+      </material>
+    </hplfibre>       
+    <hplcore rmax="0.6*mm" y="2.16*m" z="3.6*mm" thickness="0.2*mm" num_x="216" extrazgap="0*cm" vis="SplitCalHPLVis">
+      <material name = "Polysterene" sensitive = "false">
+      </material>
+    </hplcore>       
     <passive_layer x="2.16*m" y="2.16*m" z="10.0*cm" x_spacing="12*cm" vis="SplitCalPassiveVis" >
       <material name = "Lead" sensitive = "false">
       </material>

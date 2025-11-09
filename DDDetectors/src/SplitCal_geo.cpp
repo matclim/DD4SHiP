@@ -17,6 +17,7 @@
 using namespace dd4hep;
 
 static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector sens)  {
+  //Calo scintillator bars' feature extraction
   double       tol     = 0 * dd4hep::mm;
   xml_det_t    x_det   = e;
   xml_dim_t    x_detbox   = x_det.child(_U(box));
@@ -36,6 +37,20 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
   const int num_z   =  static_cast<unsigned>(calo_layer_codes.size()); 
   const int widebar_num_x   =  x_widebar.attr<unsigned>("num_x");
   const int thinbar_num_x   =  x_thinbar.attr<unsigned>("num_x");
+
+  //HPL fibre feature extraction 
+  xml_dim_t    x_hplbox   = x_det.child(_Unicode(hplbox));
+  xml_det_t    x_hplfibre = x_det.child(_Unicode(hplfibre));
+  xml_det_t    x_hplcore   = x_det.child(_Unicode(hplcore));
+  const double hplthick   = x_hplfibre.thickness();
+  const double hpldelta   = 2e0*x_hplfibre.rmax();
+  const int    hplnum_x   = int(2e0*x_hplbox.x() / hpldelta);
+  const int    hplnum_x_small = hplnum_x - 1;
+//  const int    num_z   = int(2e0*x_box.z() / (delta+2*tol));
+  const double hplnum_z   =  x_det.attr<int>("hpln_fibre_layers");
+  
+  
+  //Bar definition
   Box   widebar(x_widebar.x()-tol, x_widebar.y()-tol,(x_widebar.z()-tol)/2.);
   Box   thinbar(x_thinbar.x()-tol, x_thinbar.y()-tol,(x_thinbar.z()-tol)/2.);
   Box   passive_layer_box(x_passive_layer.x()-tol, x_passive_layer.y()-tol,(x_passive_layer.z()-tol)/2.);
@@ -48,7 +63,24 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
   thinbar_vol.setAttributes(description, x_thinbar.regionStr(), x_thinbar.limitsStr(), x_thinbar.visStr());
   passive_layer_vol.setAttributes(description, x_passive_layer.regionStr(), x_passive_layer.limitsStr(), x_passive_layer.visStr());
   split_vol.setAttributes(description, x_split.regionStr(), x_split.limitsStr(), x_split.visStr());
- 
+
+  //HPL definition
+   
+  Tube   hpl_fibre(0., x_hplfibre.rmax()-tol, x_hplfibre.y()-tol);
+  Volume hpl_fibre_vol("fibre", hpl_fibre, description.material(x_hplfibre.materialStr()));
+  hpl_fibre_vol.setAttributes(description, x_hplfibre.regionStr(), x_hplfibre.limitsStr(), x_hplfibre.visStr());
+
+  Tube   hpl_fibre_core(0., hpl_fibre.rMax()-hplthick, hpl_fibre.dZ());
+  Volume hpl_fibre_core_vol("core", hpl_fibre_core, description.material(x_hplcore.materialStr()));
+  hpl_fibre_core_vol.setAttributes(description, x_hplcore.regionStr(), x_hplcore.limitsStr(), x_hplcore.visStr());
+
+  hpl_fibre_vol.placeVolume(hpl_fibre_core_vol);
+
+  Box    hplbox(x_hplbox.x()+tol, x_hplbox.y()+tol, x_hplbox.z()+tol);
+  Volume hplbox_vol(nam, hplbox, description.air());
+  hplbox_vol.setAttributes(description, x_hplbox.regionStr(), x_hplbox.limitsStr(), x_hplbox.visStr());
+
+
 
   printout(INFO, "SandwichCalo", "%s: Bars: x: %7.3f y: %7.3f z: %7.3f mat: %s vis: %s solid: %s",
            nam.c_str(), x_widebar.x(), x_widebar.y(), x_widebar.z(), x_widebar.materialStr().c_str(),
@@ -90,7 +122,7 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
   
   //Loop for x-wise placement -> build the sensitive bar layer 
   //
-  //Wide bar layers
+  //Build Wide bar layers
   for( int ix=0; ix < widebar_num_x; ++ix )  {
     double x = x_widebar.x()/2. + static_cast<double>(ix) *  widebar_x_spacing; 
     std::cout << "X value of placed wide bar " << x << std::endl;
@@ -104,6 +136,55 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
     PlacedVolume pv = det_thin_layerbox_vol.placeVolume(thinbar_vol, Transform3D(rot,Position(x, 0e0, 0e0)));
     pv.addPhysVolID("thinbar", ix);
   }
+
+
+
+//HPL Layers
+
+  //Definition of layer volumes
+
+  //maybe change description to aluminium?
+  Box    hplbig_layer(x_hplbox.x(), x_hplbox.y(), x_hplfibre.rmax());
+  Volume hplbig_layer_vol("hplbig_layer", hplbig_layer, description.air());
+  hplbig_layer_vol.setVisAttributes(description.visAttributes(x_hplfibre.visStr()));
+
+  Box    hplsmall_layer(x_hplbox.x(), x_hplbox.y(), x_hplfibre.rmax());
+  Volume hplsmall_layer_vol("hplsmall_layer", hplsmall_layer, description.air());
+  hplsmall_layer_vol.setVisAttributes(description.visAttributes(x_hplfibre.visStr()));
+
+ 
+ //Build HPL layers
+ 
+  Rotation3D hplrot(RotationZYX(0e0, 0e0, M_PI/2e0));
+  for( int ix=0; ix < hplnum_x; ++ix )  {
+    double x = -hplbox.x() + (double(ix)+0.5) * (hpldelta + 2e0*tol);
+    PlacedVolume hplpv = hplbig_layer_vol.placeVolume(hpl_fibre_vol, Transform3D(hplrot,Position(x, 0e0, 0e0)));
+    hplpv.addPhysVolID("hplfibre", ix);
+  }
+
+  for( int ix=0; ix < hplnum_x_small; ++ix )  {
+    double x = -hplbox.x() + (double(ix)+0.5) * (hpldelta + 2e0*tol) + x_hplfibre.rmax();
+    PlacedVolume hplpv = hplsmall_layer_vol.placeVolume(hpl_fibre_vol, Transform3D(hplrot,Position(x, 0e0, 0e0)));
+    hplpv.addPhysVolID("hplfibre", ix);
+  }
+
+//Build the HPL Module
+
+  for( int iz=0; iz < num_z; ++iz )  {
+    // leave 'tol' space between the layers
+    if(iz%2 == 0){
+        double z = -hplbox.z() + (double(iz)+0.5) * (2.0*tol + hpldelta);
+        PlacedVolume hplpv = hplbox_vol.placeVolume(hplbig_layer_vol, Position(0e0, 0e0, z));
+        hplpv.addPhysVolID("hplbig_layer", iz);
+    }
+    else{
+        double z = -hplbox.z() + (double(iz)+0.5) * (2.0*tol + hpldelta);
+        PlacedVolume hplpv = hplbox_vol.placeVolume(hplsmall_layer_vol, Position(0e0, 0e0, z));
+        hplpv.addPhysVolID("hplsmall_layer", iz);
+    }
+  }
+
+  printout(INFO, "SHiP_HPL_Fibre_Trackers", "%s: Created %d layers of %d fibres each.", nam.c_str(), hplnum_z, hplnum_x);
   //Loop for z-wide placement -> build the calorimeter sandwich
   double z_layer =0.;
   Rotation3D rot_layers;
@@ -154,16 +235,36 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
     		//z_layer += x_thinbar.z()+x_passive_layer.z();
 		break;
             }
+	    case 5:{
+		//Place HPL vertically
+		z_layer += x_hplbox.z()/2.;
+	    	rot_layers = RotationZYX(M_PI/2e0,0e0,0e0);
+    		PlacedVolume pv_det = detbox_vol.placeVolume(hplbox_vol, Transform3D(rot_layers,Position(x_hplfibre.y(), 0e0, z_layer)));
+        	pv_det.addPhysVolID("hpl_layer", iz*2);
+    		z_layer += x_hplbox.z()/2.;
+		break;
+		   }
+	    case 6:{
+		//Place HPL vertically
+		z_layer += x_hplbox.z()/2.;
+	    	rot_layers = RotationZYX(0e0,0e0,0e0);
+    		PlacedVolume pv_det = detbox_vol.placeVolume(hplbox_vol, Transform3D(rot_layers,Position(x_hplfibre.y(), 0e0, z_layer)));
+        	pv_det.addPhysVolID("hpl_layer", iz*2);
+    		z_layer += x_hplbox.z()/2.;
+		break;
+		   }
     }
     std::cout << "Zlayer Det " << z_layer << std::endl;
 
-    z_layer += x_passive_layer.z()/2.;
-    //PlacedVolume pv_passive = detbox_vol.placeVolume(passive_layer_vol,Transform3D(rot_layers,Position(0e0, 0e0, z_passive)) );
-    PlacedVolume pv_passive = detbox_vol.placeVolume(passive_layer_vol,Transform3D(rot_layers,Position(x_passive_layer.x(), 0e0, z_layer)));
-    z_layer += x_passive_layer.z()/2.;
-    std::cout << "Zlayer passive " << z_layer << std::endl;
-    pv_passive.addPhysVolID("passivelayer", iz*2+1);
-    z_layer += extrazgap;
+    if(static_cast<int>(calo_layer_codes[iz]) - '0' != 5 && static_cast<int>(calo_layer_codes[iz]) - '0' != 6){
+    	z_layer += x_passive_layer.z()/2.;
+    	//PlacedVolume pv_passive = detbox_vol.placeVolume(passive_layer_vol,Transform3D(rot_layers,Position(0e0, 0e0, z_passive)) );
+    	PlacedVolume pv_passive = detbox_vol.placeVolume(passive_layer_vol,Transform3D(rot_layers,Position(x_passive_layer.x(), 0e0, z_layer)));
+    	z_layer += x_passive_layer.z()/2.;
+    	std::cout << "Zlayer passive " << z_layer << std::endl;
+    	pv_passive.addPhysVolID("passivelayer", iz*2+1);
+    	z_layer += extrazgap;
+    }
     if(iz==splitlayer){
     	z_layer += x_split.z()+x_widebar.z()+x_passive_layer.z();
     	PlacedVolume pv_split = detbox_vol.placeVolume(split_vol,Transform3D(rot,Position(x_split.x(), 0e0, z_layer)));

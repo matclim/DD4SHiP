@@ -11,6 +11,11 @@
     <composite n="1" ref="Pb"/> 
   </material> 
 
+  <material name="AluminiumPlate"> 
+   <D value="2.7" unit="g/cm3" /> 
+    <composite n="1" ref="Al"/> 
+  </material> 
+
 
 
   <!-- Polyvinyltoluene (C10H14) scintillator-->
