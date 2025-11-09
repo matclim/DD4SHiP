@@ -5,7 +5,7 @@
   <!-- Compounds and Mixtures -->
   <!-- ================================================================ -->
 
-  <!-- Polyvinyltoluene (C10H14) scintillator-->
+  <!-- Lead plate-->
   <material name="LeadPlate"> 
    <D value="11.35" unit="g/cm3" /> 
     <composite n="1" ref="Pb"/> 
@@ -20,6 +20,12 @@
     <composite n="14" ref="H" /> 
   </material> 
 
+  <!-- Polystyrene (C10H14) scintillator-->
+  <material name="Polysterene"> 
+   <D value="1.05" unit="g/cm3" /> 
+    <composite n="7" ref="C"/> 
+    <composite n="7" ref="H" /> 
+  </material> 
 
 
   <!-- Argon–CO2 70/30 -->

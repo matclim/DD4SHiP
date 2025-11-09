@@ -17,7 +17,7 @@
 using namespace dd4hep;
 
 static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector sens)  {
-  double       tol     = 1e-5 * dd4hep::mm;
+  double       tol     = 0 * dd4hep::mm;
   xml_det_t    x_det   = e;
   xml_dim_t    x_detbox   = x_det.child(_U(box));
   xml_dim_t    x_rot   = x_det.child(_U(rotation));
@@ -33,9 +33,9 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
   const double extrazgap   =  x_bar.attr<double>("extrazgap");
   const int num_z   =  x_bar.attr<int>("num_z");
   const int num_x   =  x_bar.attr<int>("num_x");
-  Box   bar(x_bar.x()-tol, x_bar.y()-tol,x_bar.z()-tol);
-  Box   passive_layer_box(x_passive_layer.x()-tol, x_passive_layer.y()-tol,x_passive_layer.z()-tol);
-  Box   split_box(x_split.x()-tol, x_split.y()-tol,x_split.z()-tol);
+  Box   bar(x_bar.x()-tol, x_bar.y()-tol,(x_bar.z()-tol)/2.);
+  Box   passive_layer_box(x_passive_layer.x()-tol, x_passive_layer.y()-tol,(x_passive_layer.z()-tol)/2.);
+  Box   split_box(x_split.x()-tol, x_split.y()-tol,(x_split.z()-tol)/2.);
   Volume bar_vol("bar", bar, description.material(x_bar.materialStr()));
   Volume passive_layer_vol("passive_layer", passive_layer_box, description.material(x_passive_layer.materialStr()));
   Volume split_vol("split", split_box, description.material(x_split.materialStr()));
@@ -51,13 +51,13 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
   bar_vol.setSensitiveDetector(sens);
 
   // Envelope: make envelope box 'tol' bigger on each side
-  Box    detbox(x_detbox.x()+tol, x_detbox.y()+tol, x_detbox.z()+tol);
+  Box    detbox(x_detbox.x()+tol, x_detbox.y()+tol, (x_detbox.z()+tol)/2.);
   Volume detbox_vol(nam, detbox, description.air());
   detbox_vol.setAttributes(description, x_detbox.regionStr(), x_detbox.limitsStr(), x_detbox.visStr());
   
 //  box_vol.setVisAttributes(description.visAttributes(""));
 
-  Box    det_layerbox(x_detbox.x()+tol, x_detbox.y()+tol, x_bar.z()+tol);
+  Box    det_layerbox(x_detbox.x()+tol, x_detbox.y()+tol, (x_bar.z()+tol)/2.);
   Volume det_layerbox_vol("det_layerbox", det_layerbox, description.air());
   det_layerbox_vol.setAttributes(description, x_detbox.regionStr(), x_detbox.limitsStr(), x_detbox.visStr());
   det_layerbox_vol.setVisAttributes(description.visAttributes(x_detbox.visStr()));
@@ -84,7 +84,8 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
   Rotation3D rot_layers;
   for( int iz=0; iz < num_z; ++iz )  {
     // leave 'tol' space between the layers
-    z_layer += x_passive_layer.z()+x_bar.z();
+    //z_layer += x_passive_layer.z()+x_bar.z();
+    z_layer += x_bar.z();
     if(iz%2==1) {
 	    rot_layers = RotationZYX(M_PI/2e0,0e0,0e0);
     	    PlacedVolume pv_det = detbox_vol.placeVolume(det_layerbox_vol, Transform3D(rot_layers,Position(x_bar.y(),-x_bar.y() , z_layer)));
@@ -98,15 +99,17 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
         pv_det.addPhysVolID("layer", iz*2);
 
     }
-    std::cout << "Zlayer Det " << z_layer << std::endl;
+    std::cout << "Zlayer Det " << z_layer << " DET Z " << x_bar.z() << std::endl;
     //PlacedVolume pv_passive = detbox_vol.placeVolume(passive_layer_vol,Transform3D(rot_layers,Position(0e0, 0e0, z_passive)) );
-    z_layer += x_bar.z()+x_passive_layer.z();
+    //z_layer += x_bar.z()+x_passive_layer.z();
+    z_layer += x_passive_layer.z();
     PlacedVolume pv_passive = detbox_vol.placeVolume(passive_layer_vol,Transform3D(rot_layers,Position(x_passive_layer.x(), 0e0, z_layer)));
-    std::cout << "Zlayer passive " << z_layer << std::endl;
+    std::cout << "Zlayer passive " << z_layer << " passive Z "<< x_passive_layer.z() << std::endl;
     pv_passive.addPhysVolID("passivelayer", iz*2+1);
     z_layer += extrazgap;
     if(iz==splitlayer){
-    	z_layer += x_split.z()+x_bar.z()+x_passive_layer.z();
+    	//z_layer += x_split.z()+x_bar.z()+x_passive_layer.z();
+    	z_layer += x_passive_layer.z();
     	PlacedVolume pv_split = detbox_vol.placeVolume(split_vol,Transform3D(rot,Position(x_split.x(), 0e0, z_layer)));
     	pv_split.addPhysVolID("split_layer", 9000);
     }
