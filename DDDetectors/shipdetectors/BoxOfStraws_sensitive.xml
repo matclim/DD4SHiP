@@ -76,13 +76,4 @@
     </readout>
   </readouts>
 
-  <fields>
-    <field name="GlobalSolenoid" type="solenoid" 
-	   inner_field="3.0*tesla"
-	   outer_field="-1.5*tesla" 
-	   zmax="2*m"
-	   outer_radius="2*m">
-    </field>
-  </fields>
-
 </lccdd>

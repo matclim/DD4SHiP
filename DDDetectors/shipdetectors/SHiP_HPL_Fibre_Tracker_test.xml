@@ -36,8 +36,8 @@
   <display>
     <vis name="Invisible" showDaughters="false" visible="false"/>
     <vis name="InvisibleWithChildren" showDaughters="true" visible="false"/>
-    <vis name="VisibleRed"   alpha="0.4" r="1.0" g="0.0" b="0.0" showDaughters="true" visible="true"/>
-    <vis name="VisibleBlue"  alpha="1.0" r="0.0" g="0.0" b="1.0" showDaughters="true" visible="true"/>
+    <vis name="VisibleRed"   alpha="0.2" r="1.0" g="0.0" b="0.0" showDaughters="true" visible="true"/>
+    <vis name="VisibleBlue"  alpha="0.7" r="0.0" g="0.0" b="1.0" showDaughters="true" visible="true"/>
     <vis name="VisibleGreen" alpha="1.0" r="0.0" g="1.0" b="0.0" showDaughters="false" visible="true"/>
     <vis name="VisibleGray"  alpha="0.5" r="0.5" g="0.5" b="0.5" showDaughters="true" visible="true"/>
   </display>
@@ -56,9 +56,9 @@
   </regions>
 
   <detectors>
-    <detector id="1" name="SHiP_HPL_Fibre_TrackerDet" type="DD4hep_SHiP_HPL_Fibre_Tracker" readout="SHiP_HPL_Fibre_TrackerHits" vis="VisibleGreen" region="FibreRegion" limits="SHiP_HPL_Fibre_TrackerLimitSet">
-      <box      x="1*m"    y="1*m" z="1000*mm"  limits="SHiP_HPL_Fibre_TrackerLimitSet" vis="VisibleRed"/>
-      <fibre rmax="0.5*mm" y="1*m" thickness="0.1*mm" vis="VisibleBlue">
+    <detector id="1" name="SHiP_HPL_Fibre_TrackerDet" type="DD4hep_SHiP_HPL_Fibre_Tracker" readout="SHiP_HPL_Fibre_TrackerHits" vis="VisibleGreen" region="FibreRegion" limits="SHiP_HPL_Fibre_TrackerLimitSet" n_fibre_layers = "3">
+      <box      x="2.16*m"    y="2.16*m" z="30.6*cm"  limits="SHiP_HPL_Fibre_TrackerLimitSet" vis="VisibleRed"/>
+      <fibre rmax="10.2*cm" y="2.16*m" thickness="1.2*cm" vis="VisibleBlue">
         <material name="Polysterene"/>
       </fibre>
       <core vis="VisibleGreen">

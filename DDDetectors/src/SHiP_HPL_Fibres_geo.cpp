@@ -34,13 +34,14 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
   const double thick   = x_fibre.thickness();
   const double delta   = 2e0*x_fibre.rmax();
   const int    num_x   = int(2e0*x_box.x() / delta);
-  const int    num_z   = int(2e0*x_box.z() / (delta+2*tol));
-
+  const int    num_x_small = num_x - 1;
+//  const int    num_z   = int(2e0*x_box.z() / (delta+2*tol));
+  const double num_z   =  x_det.attr<int>("n_fibre_layers");
   Tube   fibre(0., x_fibre.rmax()-tol, x_fibre.y()-tol);
   Volume fibre_vol("fibre", fibre, description.material(x_fibre.materialStr()));
   fibre_vol.setAttributes(description, x_fibre.regionStr(), x_fibre.limitsStr(), x_fibre.visStr());
   
-  Tube   fibre_core(0., fibre.rMax()-thick, fibre.dZ()-thick);
+  Tube   fibre_core(0., fibre.rMax()-thick, fibre.dZ());
   Volume fibre_core_vol("core", fibre_core, description.material(x_core.materialStr()));
   fibre_core_vol.setAttributes(description, x_core.regionStr(), x_core.limitsStr(), x_core.visStr());
 
@@ -59,22 +60,42 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
   Volume box_vol(nam, box, description.air());
   box_vol.setAttributes(description, x_box.regionStr(), x_box.limitsStr(), x_box.visStr());
 
-  Box    layer(x_box.x(), x_box.y(), x_fibre.rmax());
-  Volume layer_vol("layer", layer, description.air());
-  layer_vol.setVisAttributes(description.visAttributes("VisibleGray"));
+  Box    big_layer(x_box.x(), x_box.y(), x_fibre.rmax());
+  Volume big_layer_vol("big_layer", big_layer, description.air());
+  big_layer_vol.setVisAttributes(description.visAttributes("VisibleGray"));
+  
+  Box    small_layer(x_box.x(), x_box.y(), x_fibre.rmax());
+  Volume small_layer_vol("small_layer", small_layer, description.air());
+  small_layer_vol.setVisAttributes(description.visAttributes("VisibleGray"));
   
   printout(INFO, "SHiP_HPL_Fibre_Trackers", "%s: Layer:   nx: %7d nz: %7d delta: %7.3f", nam.c_str(), num_x, num_z, delta);
+ //Big layer creation
   Rotation3D rot(RotationZYX(0e0, 0e0, M_PI/2e0));
   for( int ix=0; ix < num_x; ++ix )  {
     double x = -box.x() + (double(ix)+0.5) * (delta + 2e0*tol);
-    PlacedVolume pv = layer_vol.placeVolume(fibre_vol, Transform3D(rot,Position(x, 0e0, 0e0)));
+    PlacedVolume pv = big_layer_vol.placeVolume(fibre_vol, Transform3D(rot,Position(x, 0e0, 0e0)));
     pv.addPhysVolID("fibre", ix);
   }
+  
+  for( int ix=0; ix < num_x_small; ++ix )  {
+    double x = -box.x() + (double(ix)+0.5) * (delta + 2e0*tol) + x_fibre.rmax();
+    PlacedVolume pv = small_layer_vol.placeVolume(fibre_vol, Transform3D(rot,Position(x, 0e0, 0e0)));
+    pv.addPhysVolID("fibre", ix);
+  }
+
+
   for( int iz=0; iz < num_z; ++iz )  {
     // leave 'tol' space between the layers
-    double z = -box.z() + (double(iz)+0.5) * (2.0*tol + delta);
-    PlacedVolume pv = box_vol.placeVolume(layer_vol, Position(0e0, 0e0, z));
-    pv.addPhysVolID("layer", iz);
+    if(iz%2 == 0){
+    	double z = -box.z() + (double(iz)+0.5) * (2.0*tol + delta);
+    	PlacedVolume pv = box_vol.placeVolume(big_layer_vol, Position(0e0, 0e0, z));
+    	pv.addPhysVolID("big_layer", iz);
+    }
+    else{
+    	double z = -box.z() + (double(iz)+0.5) * (2.0*tol + delta);
+    	PlacedVolume pv = box_vol.placeVolume(small_layer_vol, Position(0e0, 0e0, z));
+    	pv.addPhysVolID("small_layer", iz);
+    }
   }
   printout(INFO, "SHiP_HPL_Fibre_Trackers", "%s: Created %d layers of %d fibres each.", nam.c_str(), num_z, num_x);
   
@@ -88,5 +109,4 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
   printout(INFO, "SHiP_HPL_Fibre_Trackers", "%s: Detector construction finished.", nam.c_str());
   return sdet;
 }
-
-DECLARE_DETELEMENT(DD4hep_SHiP_HPL_Fibre_Trackers,create_detector)
+DECLARE_DETELEMENT(DD4hep_SHiP_HPL_Fibre_Tracker,create_detector)
