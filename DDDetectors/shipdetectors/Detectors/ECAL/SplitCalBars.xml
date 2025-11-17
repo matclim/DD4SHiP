@@ -8,31 +8,31 @@
 <!-- ====================================================================== -->
 
 <detectors>
-  <detector id=0 name="SplitCalTest_SLayer_0" type="DD4hep_SplitCal" reflect="true" readout="SplitCalHits" vis="SplitCalVis" calorimeterType="EM" splitlayer= "13" layer_codes="1234123412345612341234561234561234123412341234" hpln_fibre_layers="3">
+  <detector id=0 name="SplitCalTest_SLayer_0" type="DD4hep_SplitCal" reflect="true" readout="SplitCalHits" vis="SplitCalVis" calorimeterType="EM" layer_codes="17273747172737471727374756817273747172737475671727374756717273747172737471727374717273747" hpln_fibre_layers="3">
     <comment>SplitCal test</comment>
-    <box x="216*cm" y="216*cm" z="2*m" repeat="1" vis="InvisibleWithDaughters" >
-    <box>      
-    <widebar x="6*cm" y="2.16*m" z="3*cm" num_x="36" x_spacing="12*cm" z_spacing="2.56*cm" extrazgap="0*cm" vis="SplitCalWideSensitiveVis" >
+    <box x="216*cm" y="216*cm" z="1.7*m" repeat="1" vis="InvisibleWithDaughters" >
+    </box>      
+    <widebar x="6*cm" y="2.16*m" z="1*cm" num_x="36" x_extra_spacing="0*cm" z_spacing="2.56*cm" extrazgap="0*cm" vis="SplitCalWideSensitiveVis" >
       <material name = "PVT" sensitive = "true">
       </material>
     </widebar>       
-    <thinbar x="1*cm" y="2.16*m" z="5*cm" num_x="216" x_spacing="2*cm" z_spacing="2.56*cm" extrazgap="0*cm" vis="SplitCalThinSensitiveVis">
+    <thinbar x="1*cm" y="2.16*m" z="1*cm" num_x="216" x_extra_spacing="0*cm" z_spacing="2.56*cm" extrazgap="0*cm" vis="SplitCalThinSensitiveVis">
       <material name = "PVT" sensitive = "true">
       </material>
     </thinbar>       
-    <hplbox x="2.16*m" y="2.16*m" z="1*cm" num_x="216" extrazgap="0*cm" vis="SplitCalHPLVis">
-      <material name = "Air" sensitive = "false">
+    <hplbox x="2.16*m" y="2.16*m" z="1*cm" extrazgap="0*cm" vis="SplitCalHPLVis">
+      <material name = "Aluminium" sensitive = "false">
       </material>
     </hplbox>       
-    <hplfibre rmax="0.6*mm" y="2.16*m" z="3.6*mm" thickness="0.2*mm" num_x="216" extrazgap="0*cm" vis="SplitCalHPLVis">
+    <hplfibre rmax="0.6*mm" y="2.16*m" z="3.6*mm" thickness="0.2*mm" extrazgap="0*cm" vis="SplitCalHPLVis">
       <material name = "Polysterene" sensitive = "false">
       </material>
     </hplfibre>       
-    <hplcore rmax="0.6*mm" y="2.16*m" z="3.6*mm" thickness="0.2*mm" num_x="216" extrazgap="0*cm" vis="SplitCalHPLVis">
+    <hplcore rmax="0.6*mm" y="2.16*m" z="3.6*mm" thickness="0.2*mm" extrazgap="0*cm" vis="SplitCalHPLVis">
       <material name = "Polysterene" sensitive = "false">
       </material>
     </hplcore>       
-    <passive_layer x="2.16*m" y="2.16*m" z="10.0*cm" x_spacing="12*cm" vis="SplitCalPassiveVis" >
+    <passive_layer x="2.16*m" y="2.16*m" z="0.28*cm" vis="SplitCalPassiveVis" >
       <material name = "Lead" sensitive = "false">
       </material>
     </passive_layer>       

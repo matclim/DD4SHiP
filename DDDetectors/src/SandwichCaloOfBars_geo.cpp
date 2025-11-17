@@ -35,13 +35,10 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
   const int num_x   =  x_bar.attr<int>("num_x");
   Box   bar(x_bar.x()-tol, x_bar.y()-tol,(x_bar.z()-tol)/2.);
   Box   passive_layer_box(x_passive_layer.x()-tol, x_passive_layer.y()-tol,(x_passive_layer.z()-tol)/2.);
-  Box   split_box(x_split.x()-tol, x_split.y()-tol,(x_split.z()-tol)/2.);
   Volume bar_vol("bar", bar, description.material(x_bar.materialStr()));
   Volume passive_layer_vol("passive_layer", passive_layer_box, description.material(x_passive_layer.materialStr()));
-  Volume split_vol("split", split_box, description.material(x_split.materialStr()));
   bar_vol.setAttributes(description, x_bar.regionStr(), x_bar.limitsStr(), x_bar.visStr());
   passive_layer_vol.setAttributes(description, x_passive_layer.regionStr(), x_passive_layer.limitsStr(), x_passive_layer.visStr());
-  split_vol.setAttributes(description, x_split.regionStr(), x_split.limitsStr(), x_split.visStr());
   
 
   printout(INFO, "SandwichCalo", "%s: Bars: x: %7.3f y: %7.3f z: %7.3f mat: %s vis: %s solid: %s",
@@ -85,34 +82,32 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
   for( int iz=0; iz < num_z; ++iz )  {
     // leave 'tol' space between the layers
     //z_layer += x_passive_layer.z()+x_bar.z();
-    z_layer += x_bar.z();
     if(iz%2==1) {
+    	    z_layer += x_bar.z()/2.;
 	    rot_layers = RotationZYX(M_PI/2e0,0e0,0e0);
     	    PlacedVolume pv_det = detbox_vol.placeVolume(det_layerbox_vol, Transform3D(rot_layers,Position(x_bar.y(),-x_bar.y() , z_layer)));
     	    pv_det.addPhysVolID("layer", iz*2);
+    	    z_layer += x_bar.z()/2.;
     
     
     }
     else{ 
+    	z_layer += x_bar.z()/2.;
 	rot_layers = RotationZYX(0e0, 0e0, 0e0);
     	PlacedVolume pv_det = detbox_vol.placeVolume(det_layerbox_vol, Transform3D(rot_layers,Position(0e0, 0e0, z_layer)));
         pv_det.addPhysVolID("layer", iz*2);
+    	z_layer += x_bar.z()/2.;
 
     }
     std::cout << "Zlayer Det " << z_layer << " DET Z " << x_bar.z() << std::endl;
     //PlacedVolume pv_passive = detbox_vol.placeVolume(passive_layer_vol,Transform3D(rot_layers,Position(0e0, 0e0, z_passive)) );
     //z_layer += x_bar.z()+x_passive_layer.z();
-    z_layer += x_passive_layer.z();
+    z_layer += x_passive_layer.z()/2.;
     PlacedVolume pv_passive = detbox_vol.placeVolume(passive_layer_vol,Transform3D(rot_layers,Position(x_passive_layer.x(), 0e0, z_layer)));
     std::cout << "Zlayer passive " << z_layer << " passive Z "<< x_passive_layer.z() << std::endl;
     pv_passive.addPhysVolID("passivelayer", iz*2+1);
+    z_layer += x_passive_layer.z()/2.;
     z_layer += extrazgap;
-    if(iz==splitlayer){
-    	//z_layer += x_split.z()+x_bar.z()+x_passive_layer.z();
-    	z_layer += x_passive_layer.z();
-    	PlacedVolume pv_split = detbox_vol.placeVolume(split_vol,Transform3D(rot,Position(x_split.x(), 0e0, z_layer)));
-    	pv_split.addPhysVolID("split_layer", 9000);
-    }
   }
 //  printout(INFO, "SandwichCalo", "%s: Created %d layers of %d bars each.", nam.c_str(), num_z, num_x);
   //PlacedVolume pv2 = detbox_vol.placeVolume(det_layerbox_vol, Transform3D(rot,Position(0e0, 0e0, 0e0)));

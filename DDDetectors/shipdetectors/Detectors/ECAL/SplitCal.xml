@@ -34,8 +34,16 @@
   <!--  Definition of the readout segmentation/definition  -->
   <readouts>
     <readout name="SplitCalHits">
-      <segmentation type="CartesianGridXY" grid_size_x="3.5*mm" grid_size_y="3.5*mm" />
-      <id>system:8,barrel:3,module:4,layer:6,slice:5,x:32:-16,y:-16</id>
+      <segmentation type="CartesianGridXY" grid_size_x="216*m" grid_size_y="216*m" />
+    <id>
+  system:8,
+  splitcal_layerwv:6,
+  splitcal_layerwh:6,
+  splitcal_widebar:7,
+  splitcal_thinbar:7,
+  x:12,
+  y:12
+</id>
     </readout>        
   </readouts>
 
