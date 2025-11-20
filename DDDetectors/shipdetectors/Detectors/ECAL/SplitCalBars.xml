@@ -24,12 +24,12 @@
       <material name = "Aluminium" sensitive = "false">
       </material>
     </hplbox>       
-    <hplfibre rmax="0.6*mm" y="2.16*m" z="3.6*mm" thickness="0.2*mm" extrazgap="0*cm" vis="SplitCalHPLVis">
+    <hplfibre rmax="0.6*mm" y="2.16*m" z="3.6*mm" thickness="0.1*mm" extrazgap="0*cm" vis="SplitCalHPLVis">
       <material name = "Polysterene" sensitive = "false">
       </material>
     </hplfibre>       
-    <hplcore rmax="0.6*mm" y="2.16*m" z="3.6*mm" thickness="0.2*mm" extrazgap="0*cm" vis="SplitCalHPLVis">
-      <material name = "Polysterene" sensitive = "false">
+    <hplcore rmax="0.6*mm" y="2.16*m" z="3.6*mm" thickness="0.1*mm" extrazgap="0*cm" vis="SplitCalHPLVis">
+      <material name = "Polysterene" sensitive = "true">
       </material>
     </hplcore>       
     <passive_layer x="2.16*m" y="2.16*m" z="0.28*cm" vis="SplitCalPassiveVis" >

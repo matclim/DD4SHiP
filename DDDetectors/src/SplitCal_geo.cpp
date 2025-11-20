@@ -86,8 +86,6 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
            nam.c_str(), x_widebar.x(), x_widebar.y(), x_widebar.z(), x_widebar.materialStr().c_str(),
            x_widebar.visStr().c_str(), widebar.type());
   sens.setType("calorimeter");
-  widebar_vol.setSensitiveDetector(sens);
-  thinbar_vol.setSensitiveDetector(sens);
 
   // Envelope: make envelope box 'tol' bigger on each side
   Box    detbox((x_detbox.x()+tol)/2., (x_detbox.y()+tol)/2., (x_detbox.z()+tol)/2.);
@@ -110,19 +108,19 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
 //  Rotation3D rot(RotationZYX(0e0, 0e0, M_PI/2e0));
   Rotation3D rot(RotationZYX(0e0, 0e0, 0e0));
   
-  //if( x_widebar.hasChild(_U(sensitive)) )  {
+ // if( x_widebar.hasChild(_U(sensitive)) )  {
   //  sens.setType("calorimeter");
-  //  widebar_vol.setSensitiveDetector(sens);
+    widebar_vol.setSensitiveDetector(sens);
   //}
 
   //if( x_thinbar.hasChild(_U(sensitive)) )  {
   //  sens.setType("calorimeter");
-  //  thinbar_vol.setSensitiveDetector(sens);
+    thinbar_vol.setSensitiveDetector(sens);
   //}
-  //
+  
   //if(x_hplcore.hasChild(_U(sensitive)) )  {
   //  sens.setType("calorimeter");
-  //  hpl_fibre_core_vol.setSensitiveDetector(sens);
+    hpl_fibre_core_vol.setSensitiveDetector(sens);
   //}
   //Loop for x-wise placement -> build the sensitive bar layer 
   //
@@ -131,30 +129,28 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
   //long DetectorCode = 9 * 1e15; 
   //long ECALCode = 1 * 1e12;
 
-  int DetectorCode = 9 * 1e8; 
-  int ECALCode = 1 * 1e7;
+//  int DetectorCode = 9 * 1e8; 
+//  int ECALCode = 1 * 1e7;
 
   //Build Wide bar layers
   double xpos = -x_detbox.x()/2.;
+  int volumecode = 0;
   for( int ix=0; ix < widebar_num_x; ++ix )  {
  
     xpos += x_widebar.x()/2.;
-    int barcode = static_cast<int>(ix) * static_cast<int>(1e3) +1;
-    int volumecode = DetectorCode + ECALCode + barcode; 
     PlacedVolume pv = det_wide_layerbox_vol.placeVolume(widebar_vol, Transform3D(rot,Position(xpos, 0e0, 0e0)));
-    pv.addPhysVolID("splitcal_widebar", volumecode);
+    pv.addPhysVolID("splitcal_bar", volumecode);
     xpos += x_widebar.x()/2. +widebar_x_spacing; 
-
+    volumecode++;
   }
   xpos = -x_detbox.x()/2.;
   //Thin bar layers
   for( int ix=0; ix < thinbar_num_x; ++ix )  {
     xpos += x_thinbar.x()/2.; 
-    int barcode = static_cast<int>(ix) * static_cast<int>(1e3) +1;
-    int volumecode = DetectorCode + ECALCode + barcode; 
     PlacedVolume pv = det_thin_layerbox_vol.placeVolume(thinbar_vol, Transform3D(rot,Position(xpos, 0e0, 0e0)));
-    pv.addPhysVolID("splitcal_thinbar", volumecode);
+    pv.addPhysVolID("splitcal_bar", volumecode);
     xpos += x_thinbar.x()/2. + thinbar_x_spacing; 
+    volumecode++;
   }
 
 
@@ -171,24 +167,23 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
   Volume hplsmall_layer_vol("splitcal_hplsmall_layer", hplsmall_layer, description.air());
   hplsmall_layer_vol.setVisAttributes(description.visAttributes(x_hplfibre.visStr()));
 
- 
+
+  int hplvolumecode =0; 
  //Build HPL layers
  
   Rotation3D hplrot(RotationZYX(0e0, 0e0, M_PI/2e0));
   for( int ix=0; ix < hplnum_x; ++ix )  {
     double x = -hplbox.x() + (double(ix)+0.5) * (hpldelta + 2e0*tol);
-    int fibrecode = static_cast<int>(ix) * static_cast<int>(1e3);
-    int volumecode = DetectorCode + ECALCode + fibrecode; 
     PlacedVolume hplpv = hplbig_layer_vol.placeVolume(hpl_fibre_vol, Transform3D(hplrot,Position(x, 0e0, 0e0)));
-    hplpv.addPhysVolID("splitcal_hplfibre", volumecode);
+    hplpv.addPhysVolID("splitcal_hplfibre", hplvolumecode);
+    hplvolumecode++;
   }
 
   for( int ix=0; ix < hplnum_x_small; ++ix )  {
     double x = -hplbox.x() + (double(ix)+0.5) * (hpldelta + 2e0*tol) + x_hplfibre.rmax();
-    int fibrecode = static_cast<int>(ix) * static_cast<int>(1e3);
-    int volumecode = DetectorCode + ECALCode + fibrecode; 
     PlacedVolume hplpv = hplsmall_layer_vol.placeVolume(hpl_fibre_vol, Transform3D(hplrot,Position(x, 0e0, 0e0)));
-    hplpv.addPhysVolID("splitcal_hplfibre", volumecode);
+    hplpv.addPhysVolID("splitcal_hplfibre", hplvolumecode);
+    hplvolumecode++;
   }
 
 //Build the HPL Module
@@ -198,25 +193,20 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
     if(iz%2 == 0){
         double z = -hplbox.z() + (double(iz)+0.5) * (2.0*tol + hpldelta);
         PlacedVolume hplpv = hplbox_vol.placeVolume(hplbig_layer_vol, Position(0e0, 0e0, z));
-	
-	int layercode = static_cast<int>(1e6) * static_cast<int>(iz+1);
-    	int volumecode = DetectorCode + ECALCode + layercode; 
-        hplpv.addPhysVolID("splitcal_hplbig_layer", volumecode);
+        hplpv.addPhysVolID("splitcal_hpl_layer", iz);
     }
     else{
         double z = -hplbox.z() + (double(iz)+0.5) * (2.0*tol + hpldelta);
-	int layercode = static_cast<int>(1e6) * static_cast<int>(iz+1);
-    	int volumecode = DetectorCode + ECALCode + layercode; 
         PlacedVolume hplpv = hplbox_vol.placeVolume(hplsmall_layer_vol, Position(0e0, 0e0, z));
-        hplpv.addPhysVolID("splitcal_hplsmall_layer", volumecode);
+        hplpv.addPhysVolID("splitcal_hpl_layer", iz);
     }
   }
 
   printout(INFO, "SHiP_HPL_Fibre_Trackers", "%s: Created %d layers of %d fibres each.", nam.c_str(), hplnum_z, hplnum_x);
   //Loop for z-wide placement -> build the calorimeter sandwich
-  double z_layer =0.;
+  
+  double z_layer = -x_detbox.z()/2.;
   Rotation3D rot_layers;
-
 
 
   for( int iz=0; iz < num_z; ++iz )  {
@@ -228,93 +218,74 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
     
 	    case 1:{
 		//Place wide layer vertically
-		int layercode = static_cast<int>(1e6) * static_cast<int>(iz+1);
-		int orientationcode = static_cast<int>(1e5);
-    		int volumecode = DetectorCode + ECALCode + layercode + orientationcode; 
     		z_layer += x_widebar.z()/2.;
 	    	rot_layers = RotationZYX(M_PI/2e0,0e0,0e0);
     	    	PlacedVolume pv_det = detbox_vol.placeVolume(det_wide_layerbox_vol, Transform3D(rot_layers,Position(0.,0. , z_layer)));
-    	    	pv_det.addPhysVolID("splitcal_layerwv", volumecode);
+    	    	pv_det.addPhysVolID("splitcal_layer", iz);
     		//z_layer += x_widebar.z()+x_passive_layer.z();
     		z_layer += x_widebar.z()/2.;
    		break;
 	    }
 	    case 2:{
 		//Place wide layer horizontally	
-		int layercode = static_cast<int>(1e6) * static_cast<int>(iz+1);
-		int orientationcode = static_cast<int>(2e5);
-    		int volumecode = DetectorCode + ECALCode + layercode + orientationcode; 
     		z_layer += x_widebar.z()/2.;
 		rot_layers = RotationZYX(0e0, 0e0, 0e0);
     		PlacedVolume pv_det = detbox_vol.placeVolume(det_wide_layerbox_vol, Transform3D(rot_layers,Position(0.,0., z_layer)));
-        	pv_det.addPhysVolID("splitcal_layerwh", volumecode);
+        	pv_det.addPhysVolID("splitcal_layer", iz);
     		//z_layer += x_widebar.z()+x_passive_layer.z();
     		z_layer += x_widebar.z()/2.;
 	  	break; 
 	    }
 	    case 3:{
 		//Place thin layer vertically
-		int layercode = static_cast<int>(1e6) * static_cast<int>(iz+1);
-		int orientationcode = static_cast<int>(1e5);
-    		int volumecode = DetectorCode + ECALCode + layercode + orientationcode; 
     		z_layer += x_thinbar.z()/2.;
 	    	rot_layers = RotationZYX(M_PI/2e0,0e0,0e0);
     	    	PlacedVolume pv_det = detbox_vol.placeVolume(det_thin_layerbox_vol, Transform3D(rot_layers,Position(0.,0. , z_layer)));
-    	    	pv_det.addPhysVolID("splitcal_layertv", volumecode);
+    	    	pv_det.addPhysVolID("splitcal_layer", iz);
     		z_layer += x_thinbar.z()/2.;
     		//z_layer += x_thinbar.z()+x_passive_layer.z();
    		break;
             }
 	    case 4:{
 		//Place thin layer horizontally	
-		int layercode = static_cast<int>(1e6) * static_cast<int>(iz+1);
-		int orientationcode = static_cast<int>(2e5);
-    		int volumecode = DetectorCode + ECALCode + layercode + orientationcode; 
     		z_layer += x_thinbar.z()/2.;
 		rot_layers = RotationZYX(0e0, 0e0, 0e0);
     		PlacedVolume pv_det = detbox_vol.placeVolume(det_thin_layerbox_vol, Transform3D(rot_layers,Position(0.,0. , z_layer)));
-        	pv_det.addPhysVolID("splitcal_layerth", volumecode);
+        	pv_det.addPhysVolID("splitcal_layer", iz);
     		z_layer += x_thinbar.z()/2.;
     		//z_layer += x_thinbar.z()+x_passive_layer.z();
 		break;
             }
 	    case 5:{
 		//Place HPL vertically
-		int layercode = static_cast<int>(1e6) * static_cast<int>(iz+1);
-		int orientationcode = static_cast<int>(1e5);
-    		int volumecode = DetectorCode + ECALCode + layercode + orientationcode; 
 		z_layer += x_hplbox.z()/2.;
 	    	rot_layers = RotationZYX(M_PI/2e0,0e0,0e0);
     		PlacedVolume pv_det = detbox_vol.placeVolume(hplbox_vol, Transform3D(rot_layers,Position(0.,0. , z_layer)));
-        	pv_det.addPhysVolID("splitcal_hpl_layerv", volumecode);
+        	pv_det.addPhysVolID("splitcal_layer", iz);
     		z_layer += x_hplbox.z()/2.;
 		break;
 		   }
 	    case 6:{
 		//Place HPL horizontally
-		int layercode = static_cast<int>(1e6) * static_cast<int>(iz+1);
-		int orientationcode = static_cast<int>(1e5);
-    		int volumecode = DetectorCode + ECALCode + layercode + orientationcode; 
 		z_layer += x_hplbox.z()/2.;
 	    	rot_layers = RotationZYX(0e0,0e0,0e0);
     		PlacedVolume pv_det = detbox_vol.placeVolume(hplbox_vol, Transform3D(rot_layers,Position(0.,0., z_layer)));
-        	pv_det.addPhysVolID("hpl_layerh", volumecode);
+        	pv_det.addPhysVolID("splitcal_layer",iz);
     		z_layer += x_hplbox.z()/2.;
 		break;
 		   }
 	    case 7:{//Place passive layer
     		z_layer += x_passive_layer.z()/2.;
     		PlacedVolume pv_passive = detbox_vol.placeVolume(passive_layer_vol,Transform3D(rot_layers,Position(0.,0., z_layer)));
+    		pv_passive.addPhysVolID("splitcal_passivelayer", iz);
     		z_layer += x_passive_layer.z()/2.;
-    		std::cout << "Zlayer passive " << z_layer << std::endl;
-    		pv_passive.addPhysVolID("splitcal_passivelayer", 1);
     		z_layer += extrazgap;
 		break;
 		   }
 	    case 8:{//Place split
     		z_layer += x_split.z()/2.;
     		PlacedVolume pv_split = detbox_vol.placeVolume(split_vol,Transform3D(rot,Position(0.,0. , z_layer)));
-    		pv_split.addPhysVolID("splitcal_split_layer", 0);
+    		pv_split.addPhysVolID("splitcal_split_layer", iz);
     		z_layer += x_split.z()/2.;
 		break;
 		   }

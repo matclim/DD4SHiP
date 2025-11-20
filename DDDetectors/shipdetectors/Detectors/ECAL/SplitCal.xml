@@ -35,15 +35,7 @@
   <readouts>
     <readout name="SplitCalHits">
       <segmentation type="CartesianGridXY" grid_size_x="216*m" grid_size_y="216*m" />
-    <id>
-  system:8,
-  splitcal_layerwv:6,
-  splitcal_layerwh:6,
-  splitcal_widebar:7,
-  splitcal_thinbar:7,
-  x:12,
-  y:12
-</id>
+    <id>system:8,splitcal_bar:8,splitcal_layer:8,splitcal_hpl_layer:2,splitcal_hplfibre:14,x:12,y:12</id>
     </readout>        
   </readouts>
 
