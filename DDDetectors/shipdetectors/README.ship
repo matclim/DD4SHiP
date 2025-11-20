@@ -1,0 +1,19 @@
+Very short for now:
+
+you set the layers using the layer codes in Detectors/ECAL/SplitCalBars.xml and Detectors/HCAL/HCALBars.xml
+
+1: wide layer vertical
+2: wide layer horizontal
+3: thin layer vertical (not in HCAL)
+4: thin layer horizontal (not in HCAL)
+5: HPL vertical (not in HCAL)
+6: HPL horizontal (not in HCAL)
+7: passive layer
+8: split (not in HCAL)
+
+
+Run simulation using 
+
+ddsim --compactFile=./SHiPCalo.xml --runType=batch -G -N=10  --steeringFile steering.py --outputFile=testSHiPCalo.root --gun.position "0.0 0.0 -110.0*cm" --gun.direction "0.0 0.0 1.0" --gun.energy "30*GeV" --part.userParticleHandler=""   --gun.particle "pi-"
+
+check out readHits_Full.C for info (run first time with root -l readHits_Full.C+)
