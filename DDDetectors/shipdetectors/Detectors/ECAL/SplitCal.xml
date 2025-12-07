@@ -40,10 +40,10 @@
     <readout name="SplitCalThinBarHits">
       <segmentation type="CartesianGridXY" grid_size_x="1*cm" grid_size_y="1*cm" offset_x="-108*cm" offset_y="-108*cm"/>
     <id>system:8,splitcal_bar:8,splitcal_layer:8,x:20,y:20</id>
-    </readout>        
-    <readout name="SplitCalHPLHits">
+</readout>        
+<readout name="SplitCalHPLHits">
       <segmentation type="CartesianGridXY" grid_size_x="0.1*mm" grid_size_y="0.1*mm" offset_x="-108*cm" offset_y="-108*cm"/>
-    <id>system:8,splitcal_hpl_layer:2,splitcal_hplfibre:12,x:21,y:21</id>
+    <id>system:8,splitcal_layer:4,splitcal_hpl_layer:4,splitcal_hplfibre:12,x:16,y:16</id>
     </readout>        
   </readouts>
 

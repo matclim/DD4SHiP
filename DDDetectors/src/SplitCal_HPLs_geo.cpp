@@ -141,6 +141,7 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
   double z_layer = -x_detbox.z()/2.;
   Rotation3D rot_layers;
 
+  int hplcount = 0;
 
   for( int iz=0; iz < num_z; ++iz )  {
     // leave 'tol' space between the layers
@@ -174,8 +175,9 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
 		z_layer += x_hplbox.z()/2.;
 	    	rot_layers = RotationZYX(M_PI/2e0,0e0,0e0);
     		PlacedVolume pv_det = detbox_vol.placeVolume(hplbox_vol, Transform3D(rot_layers,Position(0.,0. , z_layer)));
-        	pv_det.addPhysVolID("splitcal_layer", iz);
+        	pv_det.addPhysVolID("splitcal_layer", hplcount);
     		z_layer += x_hplbox.z()/2.;
+		hplcount ++;
 		break;
 		   }
 	    case 6:{
@@ -183,8 +185,9 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
 		z_layer += x_hplbox.z()/2.;
 	    	rot_layers = RotationZYX(0e0,0e0,0e0);
     		PlacedVolume pv_det = detbox_vol.placeVolume(hplbox_vol, Transform3D(rot_layers,Position(0.,0., z_layer)));
-        	pv_det.addPhysVolID("splitcal_layer",iz);
+        	pv_det.addPhysVolID("splitcal_layer",hplcount);
     		z_layer += x_hplbox.z()/2.;
+		hplcount ++;
 		break;
 		   }
 	    case 7:{//Place passive layer
@@ -199,33 +202,13 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
     }
     std::cout << "Zlayer Det " << z_layer << std::endl;
 
-//    if(static_cast<int>(calo_layer_codes[iz]) - '0' != 5 && static_cast<int>(calo_layer_codes[iz]) - '0' != 6){
-//    	z_layer += x_passive_layer.z()/2.;
-//    	PlacedVolume pv_passive = detbox_vol.placeVolume(passive_layer_vol,Transform3D(rot_layers,Position(x_passive_layer.x(), 0e0, z_layer)));
-//    	z_layer += x_passive_layer.z()/2.;
-//    	std::cout << "Zlayer passive " << z_layer << std::endl;
-//    	pv_passive.addPhysVolID("passivelayer", iz*2+1);
-//    	z_layer += extrazgap;
-//    }
-//    if(iz==splitlayer){
-//    	z_layer += x_split.z()+x_widebar.z()+x_passive_layer.z();
-//    	PlacedVolume pv_split = detbox_vol.placeVolume(split_vol,Transform3D(rot,Position(x_split.x(), 0e0, z_layer)));
-//    	pv_split.addPhysVolID("split_layer", 9000);
-//    }
-  }
-//  printout(INFO, "SandwichCalo", "%s: Created %d layers of %d bars each.", nam.c_str(), num_z, num_x);
-  //PlacedVolume pv2 = detbox_vol.placeVolume(det_layerbox_vol, Transform3D(rot,Position(0e0, 0e0, 0e0)));
-  //pv2.addPhysVolID("det_layerbox", 0e0);
-  
+  } 
   DetElement   sdet  (nam, x_det.id());
   Volume       mother(description.pickMotherVolume(sdet));
   Rotation3D   rot3D (RotationZYX(x_rot.z(0), x_rot.y(0), x_rot.x(0)));
   Transform3D  trafo (rot3D, Position(x_pos.x(0), x_pos.y(0), x_pos.z(0)));
-// PlacedVolume pv2 = mother.placeVolume(passive_layer_vol, trafo);
   PlacedVolume pv = mother.placeVolume(detbox_vol, trafo);
-  //pv2.addPhysVolID("system", x_det.id());
   pv.addPhysVolID("system", x_det.id());
-  //sdet.setPlacement(pv2);  // associate the placed volume to the detector element
   sdet.setPlacement(pv);  // associate the placed volume to the detector element
   printout(INFO, "SplitCal", "%s: Detector construction finished.", nam.c_str());
   return sdet;

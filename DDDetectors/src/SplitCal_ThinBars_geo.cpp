@@ -40,14 +40,6 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
 
   //HPL fibre feature extraction 
   xml_dim_t    x_hplbox   = x_det.child(_Unicode(hplbox));
-  xml_det_t    x_hplfibre = x_det.child(_Unicode(hplfibre));
-  xml_det_t    x_hplcore   = x_det.child(_Unicode(hplcore));
-  const double hpl_fibrethick   = x_hplfibre.thickness();
-  const double hpldelta   = 2e0*x_hplfibre.rmax();
-  const int    hplnum_x   = int(x_hplbox.x() / hpldelta);
-  const int    hplnum_x_small = hplnum_x - 1;
-//  const int    num_z   = int(2e0*x_box.z() / (delta+2*tol));
-  const double hplnum_z   =  x_det.attr<int>("hpln_fibre_layers");
   
   
   //Bar definition
@@ -63,20 +55,6 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
 
   //HPL definition
    
-  Tube   hpl_fibre(0., x_hplfibre.rmax()-tol, (x_hplfibre.y()-tol)/2.);
-  Volume hpl_fibre_vol("fibre", hpl_fibre, description.material(x_hplfibre.materialStr()));
-  hpl_fibre_vol.setAttributes(description, x_hplfibre.regionStr(), x_hplfibre.limitsStr(), x_hplfibre.visStr());
-
-  Tube   hpl_fibre_core(0., hpl_fibre.rMax()-hpl_fibrethick, (x_hplfibre.y()-tol)/2.);
-  Volume hpl_fibre_core_vol("core", hpl_fibre_core, description.material(x_hplcore.materialStr()));
-  hpl_fibre_core_vol.setAttributes(description, x_hplcore.regionStr(), x_hplcore.limitsStr(), x_hplcore.visStr());
-
-  hpl_fibre_vol.placeVolume(hpl_fibre_core_vol);
-
-  Box    hplbox((x_hplbox.x()-tol)/2., (x_hplbox.y()-tol)/2., (x_hplbox.z()-tol)/2.);
-  Volume hplbox_vol(nam, hplbox, description.air());
-  hplbox_vol.setAttributes(description, x_hplbox.regionStr(), x_hplbox.limitsStr(), x_hplbox.visStr());
-
 
 
   sens.setType("calorimeter");
@@ -103,7 +81,6 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
   
   //if(x_hplcore.hasChild(_U(sensitive)) )  {
   //  sens.setType("calorimeter");
-    hpl_fibre_core_vol.setSensitiveDetector(sens);
   //}
   //Loop for x-wise placement -> build the sensitive bar layer 
   //
@@ -132,50 +109,8 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
 
   //Definition of layer volumes
 
-  Box    hplbig_layer((x_hplbox.x()-tol)/2., (x_hplbox.y()-tol)/2., (x_hplfibre.rmax()-tol)/2.);
-  Volume hplbig_layer_vol("splitcal_hplbig_layer", hplbig_layer, description.air());
-  hplbig_layer_vol.setVisAttributes(description.visAttributes(x_hplfibre.visStr()));
 
-  Box    hplsmall_layer((x_hplbox.x()-tol)/2., (x_hplbox.y()-tol)/2., (x_hplfibre.rmax()-tol)/2.);
-  Volume hplsmall_layer_vol("splitcal_hplsmall_layer", hplsmall_layer, description.air());
-  hplsmall_layer_vol.setVisAttributes(description.visAttributes(x_hplfibre.visStr()));
-
-
-  int hplvolumecode =0; 
- //Build HPL layers
  
-  Rotation3D hplrot(RotationZYX(0e0, 0e0, M_PI/2e0));
-  for( int ix=0; ix < hplnum_x; ++ix )  {
-    double x = -hplbox.x() + (double(ix)+0.5) * (hpldelta + 2e0*tol);
-    PlacedVolume hplpv = hplbig_layer_vol.placeVolume(hpl_fibre_vol, Transform3D(hplrot,Position(x, 0e0, 0e0)));
-    hplpv.addPhysVolID("splitcal_hplfibre", hplvolumecode);
-    hplvolumecode++;
-  }
-
-  for( int ix=0; ix < hplnum_x_small; ++ix )  {
-    double x = -hplbox.x() + (double(ix)+0.5) * (hpldelta + 2e0*tol) + x_hplfibre.rmax();
-    PlacedVolume hplpv = hplsmall_layer_vol.placeVolume(hpl_fibre_vol, Transform3D(hplrot,Position(x, 0e0, 0e0)));
-    hplpv.addPhysVolID("splitcal_hplfibre", hplvolumecode);
-    hplvolumecode++;
-  }
-
-//Build the HPL Module
-
-  for( int iz=0; iz < hplnum_z; ++iz )  {
-    // leave 'tol' space between the layers
-    if(iz%2 == 0){
-        double z = -hplbox.z() + (double(iz)+0.5) * (2.0*tol + hpldelta);
-        PlacedVolume hplpv = hplbox_vol.placeVolume(hplbig_layer_vol, Position(0e0, 0e0, z));
-        hplpv.addPhysVolID("splitcal_hpl_layer", iz);
-    }
-    else{
-        double z = -hplbox.z() + (double(iz)+0.5) * (2.0*tol + hpldelta);
-        PlacedVolume hplpv = hplbox_vol.placeVolume(hplsmall_layer_vol, Position(0e0, 0e0, z));
-        hplpv.addPhysVolID("splitcal_hpl_layer", iz);
-    }
-  }
-
-  printout(INFO, "SHiP_HPL_Fibre_Trackers", "%s: Created %d layers of %d fibres each.", nam.c_str(), hplnum_z, hplnum_x);
   
   double z_layer = -x_detbox.z()/2.;
   Rotation3D rot_layers;

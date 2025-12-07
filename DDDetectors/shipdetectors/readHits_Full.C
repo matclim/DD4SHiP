@@ -32,7 +32,7 @@ void readHits_Full() {
     // ============================================================
     // 2. OPEN FILE AND GET TREE
     // ============================================================
-    TFile* file = new TFile("/eos/user/m/mclimesc/SPLITCAL/SplitCalPhysics/DD4HEP_PID/PID_NoSplitCal/pi_sample_30GeV.root", "READ");
+    TFile* file = new TFile("/eos/user/m/mclimesc/SPLITCAL/SplitCalPhysics/DD4HEP_PID/PID_plus/mugun_50GeV.root", "READ");
     if (!file || file->IsZombie()) {
         std::cerr << "Error: Could not open file 'testSHiPCalo.root'!" << std::endl;
         return;
