@@ -31,7 +31,7 @@
   <!--  Definition of the readout segmentation/definition  -->
   <readouts>
     <readout name="SHiPHCALHits">
-      <segmentation type="CartesianGridXY" grid_size_x="3.5*mm" grid_size_y="3.5*mm" />
+      <segmentation type="CartesianGridXY" grid_size_x="2.65*cm" grid_size_y="2.65*cm" offset_x="-108*cm" offset_y="-108*cm" />
       <id>system:8,hcal_layer:4,widebar:10,hcal_passivelayer:1,x:16,y:16</id>
     </readout>        
   </readouts>

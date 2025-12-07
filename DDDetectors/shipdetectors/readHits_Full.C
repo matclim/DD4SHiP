@@ -32,7 +32,7 @@ void readHits_Full() {
     // ============================================================
     // 2. OPEN FILE AND GET TREE
     // ============================================================
-    TFile* file = new TFile("testSHiPCalo.root", "READ");
+    TFile* file = new TFile("/eos/user/m/mclimesc/SPLITCAL/SplitCalPhysics/DD4HEP_PID/PID_NoSplitCal/pi_sample_30GeV.root", "READ");
     if (!file || file->IsZombie()) {
         std::cerr << "Error: Could not open file 'testSHiPCalo.root'!" << std::endl;
         return;
@@ -49,22 +49,23 @@ void readHits_Full() {
     // 3. SETUP BRANCH ADDRESS
     // ============================================================
     // Define the pointer to the vector of hits. Initialize to nullptr.
-    std::vector<dd4hep::sim::Geant4Calorimeter::Hit*>* hits = nullptr;
+//    std::vector<dd4hep::sim::Geant4Calorimeter::Hit*>* hits = nullptr;
     std::vector<dd4hep::sim::Geant4Calorimeter::Hit*>* Hhits = nullptr;
 
-    if (!tree->GetBranch("SplitCalHits")) {
-         std::cerr << "Error: Branch 'SplitCalHits' not found in tree!" << std::endl;
-         file->Close();
-         return;
-    }
+    //if (!tree->GetBranch("SplitCalHits")) {
+    //     std::cerr << "Error: Branch 'SplitCalHits' not found in tree!" << std::endl;
+    //     file->Close();
+    //     return;
+    //}
 
-    tree->SetBranchAddress("SplitCalHits", &hits);
+    //tree->SetBranchAddress("SplitCalHits", &hits);
     tree->SetBranchAddress("SHiPHCALHits", &Hhits);
 
     // ============================================================
     // 4. LOOP OVER EVENTS AND HITS
     // ============================================================
     int nEvents = tree->GetEntries();
+    nEvents = 10;
     std::cout << "--- Starting analysis of " << nEvents << " events ---" << std::endl;
     std::cout << std::fixed << std::setprecision(5); // Set precision for coordinates/energy
 
@@ -75,16 +76,13 @@ void readHits_Full() {
     TH2F *h_xz = new TH2F("h_xz","h_xz;X [mm];Z [mm]",300,-1000,1000,300,-1000,2500);
     TH2F *h_yz = new TH2F("h_yz","h_yz;Y [mm];Z [mm]",100,0,100,100,-1000,1000);
 
+    ofstream outfile;
+    outfile.open("ZZs.txt");
+
     for (int i = 0; i < nEvents; ++i) {
         tree->GetEntry(i);
 
-        // Safety check for null pointer (shouldn't happen if dictionary loaded correctly)
-        if (hits == nullptr) {
-            std::cerr << "Fatal Error: Hits vector is null in Event " << i << ". Aborting." << std::endl;
-            break; 
-        }
 
-        int nHits = hits->size();
         int nHHits = Hhits->size();
        
         for (size_t j = 0; j < Hhits->size(); ++j) {
@@ -94,7 +92,8 @@ void readHits_Full() {
             double y = hit->position.y();
             double z = hit->position.z();
 		
-	    cout << "Z "<< z << endl;
+	
+    	    outfile << z << "\n";	    
 
 	    h_nrj->Fill(hit->energyDeposit);
 	    h_x->Fill(hit->position.x());
@@ -104,24 +103,26 @@ void readHits_Full() {
 	    h_yz->Fill(hit->position.y(),hit->position.z());
 	}
 
-        // Loop over hits in this event
-        for (size_t j = 0; j < hits->size(); ++j) {
-            dd4hep::sim::Geant4Calorimeter::Hit* hit = hits->at(j);
-
-            // Extract necessary information
-            double energy = hit->energyDeposit;
-            double x = hit->position.x();
-            double y = hit->position.y();
-            double z = hit->position.z();
-		
-	    h_nrj->Fill(hit->energyDeposit);
-	    h_x->Fill(hit->position.x());
-	    h_y->Fill(hit->position.y());
-	    h_z->Fill(hit->position.z());
-	    h_xz->Fill(hit->position.x(),hit->position.z());
-	    h_yz->Fill(hit->position.y(),hit->position.z());
-
-        }
+//        // Loop over hits in this event
+//        for (size_t j = 0; j < hits->size(); ++j) {
+//            dd4hep::sim::Geant4Calorimeter::Hit* hit = hits->at(j);
+//
+//            // Extract necessary information
+//            double energy = hit->energyDeposit;
+//            double x = hit->position.x();
+//            double y = hit->position.y();
+//            double z = hit->position.z();
+//	
+//    	    outfile << z << "\n";	    
+//
+//	    h_nrj->Fill(hit->energyDeposit);
+//	    h_x->Fill(hit->position.x());
+//	    h_y->Fill(hit->position.y());
+//	    h_z->Fill(hit->position.z());
+//	    h_xz->Fill(hit->position.x(),hit->position.z());
+//	    h_yz->Fill(hit->position.y(),hit->position.z());
+//
+//        }
     }
 
     TCanvas *c_nrj = new TCanvas("c_nrj","c_nrj",800,600);
@@ -137,6 +138,6 @@ void readHits_Full() {
     TCanvas *c_yz = new TCanvas("c_yz","c_yz",800,600);	
     h_yz->Draw("COLZ");    
 
-
+outfile.close();
 //    file->Close();
 }

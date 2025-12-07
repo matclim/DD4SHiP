@@ -46,7 +46,6 @@
   
   <comment>Calorimeters</comment>
   <include ref="Detectors/ECAL/SplitCal.xml"/>
-  <include ref="Detectors/HCAL/HCAL.xml"/>
  
 
 </lccdd>
