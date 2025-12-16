@@ -1,0 +1,28 @@
+<!-- ====================================================================== -->
+<!--                                                                        -->
+<!--    XML description of the SHiP HCAL scintillator bars     		    -->
+<!--    and passive layers						    -->
+<!--    Author: M.Climescu						    -->
+<!--    Date: 28/10/2025                                                    -->
+<!--                                                                        -->
+<!-- ====================================================================== -->
+
+<detectors>
+  <detector id=1 name="HCAL_module" type="DD4hep_SHiPHCAL" reflect="true" readout="SHiPHCALHits" vis="SplitCalVis" calorimeterType="HCAL" layer_codes="172717271">
+    <comment>HCAL test</comment>
+    <box x="216*cm" y="216*cm" z="2*m" repeat="1" vis="InvisibleWithDaughters" >
+    </box>      
+    <bar x="6*cm" y="2.16*m" z="1*cm" num_x="36" x_extra_spacing="0*cm" z_spacing="2.56*cm" extrazgap="0*cm" vis="HCALSensitiveVis" >
+      <material name = "PVT" sensitive = "true">
+      </material>
+    </bar>       
+    <passive_layer x="2.16*m" y="2.16*m" z="17.0*cm" x_spacing="12*cm" vis="SplitCalPassiveVis" >
+      <material name = "Iron" sensitive = "false">
+      </material>
+    </passive_layer>       
+    <position x="0*cm" y="0*cm" z="220*cm">
+    </position>
+    <rotation x="0" y="0" z="0">
+    </rotation>
+  </detector>
+</detectors>
