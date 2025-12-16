@@ -12,11 +12,11 @@
     <comment>SplitCal test</comment>
     <box x="216*cm" y="216*cm" z="1.7*m" repeat="1" vis="InvisibleWithDaughters" >
     </box>      
-    <widebar x="6*cm" y="2.16*m" z="1*cm" num_x="36" x_extra_spacing="0*cm" z_spacing="2.56*cm" extrazgap="0*cm" vis="SplitCalWideSensitiveVis" >
+    <widebar x="6*cm" y="2.16*m" z="1*cm" num_x="36" x_extra_spacing="0*cm" z_spacing="2.56*cm" extrazgap="0*cm" x_offset="0*cm" y_offset="0*cm" vis="SplitCalWideSensitiveVis" >
       <material name = "PVT" sensitive = "true">
       </material>
     </widebar>       
-    <thinbar x="1*cm" y="2.16*m" z="1*cm" num_x="216" x_extra_spacing="0*cm" z_spacing="2.56*cm" extrazgap="0*cm" vis="SplitCalThinSensitiveVis">
+    <thinbar x="1*cm" y="2.16*m" z="1*cm" num_x="216" x_extra_spacing="0*cm" z_spacing="2.56*cm" x_offset="0*cm" y_offset="0*cm" extrazgap="0*cm" vis="SplitCalThinSensitiveVis">
       <material name = "PVT" sensitive = "true">
       </material>
     </thinbar>       
@@ -49,11 +49,11 @@
     <comment>SplitCal test</comment>
     <box x="216*cm" y="216*cm" z="1.7*m" repeat="1" vis="InvisibleWithDaughters" >
     </box>      
-    <widebar x="6*cm" y="2.16*m" z="1*cm" num_x="36" x_extra_spacing="0*cm" z_spacing="2.56*cm" extrazgap="0*cm" vis="SplitCalWideSensitiveVis" >
+    <widebar x="6*cm" y="2.16*m" z="1*cm" num_x="36" x_extra_spacing="0*cm" z_spacing="2.56*cm" extrazgap="0*cm" x_offset="0*cm" y_offset="0*cm" vis="SplitCalWideSensitiveVis" >
       <material name = "PVT" sensitive = "true">
       </material>
     </widebar>       
-    <thinbar x="1*cm" y="2.16*m" z="1*cm" num_x="216" x_extra_spacing="0*cm" z_spacing="2.56*cm" extrazgap="0*cm" vis="SplitCalThinSensitiveVis">
+    <thinbar x="1*cm" y="2.16*m" z="1*cm" num_x="216" x_extra_spacing="0*cm" z_spacing="2.56*cm" extrazgap="0*cm" x_offset="0*cm" y_offset="0*cm" vis="SplitCalThinSensitiveVis">
       <material name = "PVT" sensitive = "true">
       </material>
     </thinbar>       

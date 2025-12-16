@@ -11,6 +11,13 @@
     <composite n="1" ref="Pb"/> 
   </material> 
 
+
+  <material name="IronPlate"> 
+   <D value="7.874" unit="g/cm3" /> 
+    <composite n="1" ref="Fe"/> 
+  </material> 
+
+
   <material name="AluminiumPlate"> 
    <D value="2.7" unit="g/cm3" /> 
     <composite n="1" ref="Al"/> 

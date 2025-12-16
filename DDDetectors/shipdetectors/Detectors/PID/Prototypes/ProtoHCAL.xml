@@ -1,7 +1,7 @@
 <!-- ====================================================================== -->
 <!--                                                                        -->
-<!--    XML description of the complete SHiP Split Calorimeter              -->
-<!--     					                            -->
+<!--    XML description of the complete SiD tracker detector                -->
+<!--    of the SiD linear collider detector design.                         -->
 <!--                                                                        -->
 <!--    Contained are the required                                          -->
 <!--      ++ global constants used uniquely by this module                  -->
@@ -12,40 +12,32 @@
 <!--         the corresponding support structure(s)                         -->
 <!--                                                                        -->
 <!--                                                                        -->
-<!--   @author  M.Climescu                                                  -->
-<!--   @date    26/10/2015                                                  -->
+<!--   @author  M.Frank                                                     -->
+<!--   @date    14/11/2014                                                  -->
 <!--                                                                        -->
 <!-- ====================================================================== -->
 
 <lccdd>
-
-  <includes>
-    <file ref="elements.xml"/>
-    <file ref="materials.xml"/>
-  </includes>
-
+  <!--  Definition of global dictionary constants          -->
   <define>
-    <include ref="SHiPConstants.xml"/>
   </define>
 
-  <regions>
-    <region name="Downstream" eunit="MeV" lunit="cm" cut="0.001" threshold="0.001">
-      <limitsetref name="PlaceHolderLimit"/>
-    </region>
-  </regions>
-
-  <!-- Common Generic visualization attributes -->
+  <!--  Definition of the used visualization attributes    -->
   <display>
-    <vis name="InvisibleNoDaughters"      showDaughters="false" visible="false"/>
-    <vis name="InvisibleWithDaughters"    showDaughters="true" visible="false"/>
-    <vis name="GreenVis"   alpha="1" r="0.0" g="1.0" b="0.0" showDaughters="true" visible="true"/>
-    <vis name="RedVis"     alpha="1" r="1.0" g="0.0" b="0.0" showDaughters="true" visible="true"/>
-    <vis name="BlueVis"    alpha="1" r="0.0" g="0.0" b="1.0" showDaughters="true" visible="true"/>
+    <vis name="HCALSensitiveVis"    alpha="0.8" r="0.0"  g="0.0"  b="1.0"  showDaughters="true" visible="true"/>
+    <vis name="HCALAbsorberVis"     alpha="1.0" r="1.0"  g="0.0"  b="0.0"  showDaughters="true" visible="true"/>
   </display>
 
-  
-  <comment>Calorimeters</comment>
-  <include ref="Detectors/PID/ECAL/SplitCal.xml"/>
- 
+  <!--  Definition of the readout segmentation/definition  -->
+  <readouts>
+    <readout name="SHiPHCALHits">
+      <segmentation type="CartesianGridXY" grid_size_x="2.65*cm" grid_size_y="2.65*cm" offset_x="-108*cm" offset_y="-108*cm" />
+      <id>system:8,hcal_layer:4,widebar:10,hcal_passivelayer:1,x:16,y:16</id>
+    </readout>        
+  </readouts>
 
+  <!--  Includes for sensitives and support                -->
+  <include ref="ProtoHCALBars.xml"/>
+<!--
+-->
 </lccdd>

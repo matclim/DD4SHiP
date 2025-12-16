@@ -30,24 +30,17 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
   std::string  nam     = x_det.nameStr();
   //vertical bars by default
 //  const double splitlayer   =  x_det.attr<int>("splitlayer");
+  const double x_offset = x_widebar.attr<double>("x_offset");
+  const double y_offset = x_widebar.attr<double>("y_offset");
   const double widebar_x_spacing   =  x_widebar.attr<double>("x_extra_spacing");
-  const double thinbar_x_spacing   =  x_thinbar.attr<double>("x_extra_spacing");
   const double extrazgap   =  x_widebar.attr<double>("extrazgap");
   const std::string calo_layer_codes = x_det.attr<std::string>("layer_codes");
   const int num_z   =  static_cast<unsigned>(calo_layer_codes.size()); 
   const int widebar_num_x   =  x_widebar.attr<unsigned>("num_x");
-  const int thinbar_num_x   =  x_thinbar.attr<unsigned>("num_x");
 
   //HPL fibre feature extraction 
   xml_dim_t    x_hplbox   = x_det.child(_Unicode(hplbox));
-  xml_det_t    x_hplfibre = x_det.child(_Unicode(hplfibre));
-  xml_det_t    x_hplcore   = x_det.child(_Unicode(hplcore));
-  const double hpl_fibrethick   = x_hplfibre.thickness();
-  const double hpldelta   = 2e0*x_hplfibre.rmax();
-  const int    hplnum_x   = int(x_hplbox.x() / hpldelta);
-  const int    hplnum_x_small = hplnum_x - 1;
 //  const int    num_z   = int(2e0*x_box.z() / (delta+2*tol));
-  const double hplnum_z   =  x_det.attr<int>("hpln_fibre_layers");
   
   
   //Bar definition
@@ -72,8 +65,9 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
   detbox_vol.setAttributes(description, x_detbox.regionStr(), x_detbox.limitsStr(), x_detbox.visStr());
   
 //  box_vol.setVisAttributes(description.visAttributes(""));
-
-  Box    det_wide_layerbox((x_detbox.x()+tol)/2., (x_detbox.y()+tol)/2., (x_widebar.z()+tol)/2.);
+	
+  double wideboxwidth = x_widebar.x()*static_cast<double>(widebar_num_x);
+  Box    det_wide_layerbox((wideboxwidth+tol)/2., (x_widebar.y()+tol)/2., (x_widebar.z()+tol)/2.);
   Volume det_wide_layerbox_vol("det_wide_layerbox", det_wide_layerbox, description.air());
   det_wide_layerbox_vol.setAttributes(description, x_detbox.regionStr(), x_detbox.limitsStr(), x_detbox.visStr());
   det_wide_layerbox_vol.setVisAttributes(description.visAttributes(x_detbox.visStr()));
@@ -88,7 +82,7 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
   //}
 
   //Build Wide bar layers
-  double xpos = -x_detbox.x()/2.;
+  double xpos = -(wideboxwidth+tol)/2.;
   int volumecode = 0;
   for( int ix=0; ix < widebar_num_x; ++ix )  {
  
@@ -116,14 +110,15 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
     // leave 'tol' space between the layers
 
     
-    std::cout << static_cast<int>(calo_layer_codes[iz]) - '0' << std::endl;
+    //std::cout << static_cast<int>(calo_layer_codes[iz]) - '0' << std::endl;
     switch(static_cast<int>(calo_layer_codes[iz]) - '0'){
     
 	    case 1:{
 		//Place wide layer vertically
     		z_layer += x_widebar.z()/2.;
 	    	rot_layers = RotationZYX(M_PI/2e0,0e0,0e0);
-    	    	PlacedVolume pv_det = detbox_vol.placeVolume(det_wide_layerbox_vol, Transform3D(rot_layers,Position(0.,0. , z_layer)));
+		//Order of offets To be tested
+    	    	PlacedVolume pv_det = detbox_vol.placeVolume(det_wide_layerbox_vol, Transform3D(rot_layers,Position(x_offset,y_offset,z_layer)));
     	    	pv_det.addPhysVolID("splitcal_layer", iz);
     		//z_layer += x_widebar.z()+x_passive_layer.z();
     		z_layer += x_widebar.z()/2.;
@@ -133,7 +128,8 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
 		//Place wide layer horizontally	
     		z_layer += x_widebar.z()/2.;
 		rot_layers = RotationZYX(0e0, 0e0, 0e0);
-    		PlacedVolume pv_det = detbox_vol.placeVolume(det_wide_layerbox_vol, Transform3D(rot_layers,Position(0.,0., z_layer)));
+		//Order of offets To be tested
+    		PlacedVolume pv_det = detbox_vol.placeVolume(det_wide_layerbox_vol, Transform3D(rot_layers,Position(x_offset,y_offset,z_layer)));
         	pv_det.addPhysVolID("splitcal_layer", iz);
     		//z_layer += x_widebar.z()+x_passive_layer.z();
     		z_layer += x_widebar.z()/2.;
