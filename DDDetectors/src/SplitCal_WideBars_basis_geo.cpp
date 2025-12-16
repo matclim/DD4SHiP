@@ -30,9 +30,9 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
   std::string  nam     = x_det.nameStr();
   //vertical bars by default
 //  const double splitlayer   =  x_det.attr<int>("splitlayer");
+  const double x_offset = x_widebar.attr<double>("x_offset");
+  const double y_offset = x_widebar.attr<double>("y_offset");
   const double widebar_x_spacing   =  x_widebar.attr<double>("x_extra_spacing");
-  const double x_offset   =  x_widebar.attr<double>("x_offset");
-  const double y_offset   =  x_widebar.attr<double>("y_offset");
   const double extrazgap   =  x_widebar.attr<double>("extrazgap");
   const std::string calo_layer_codes = x_det.attr<std::string>("layer_codes");
   const int num_z   =  static_cast<unsigned>(calo_layer_codes.size()); 
@@ -117,7 +117,8 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
 		//Place wide layer vertically
     		z_layer += x_widebar.z()/2.;
 	    	rot_layers = RotationZYX(M_PI/2e0,0e0,0e0);
-    	    	PlacedVolume pv_det = detbox_vol.placeVolume(det_wide_layerbox_vol, Transform3D(rot_layers,Position(0,0,z_layer)));
+		//Order of offets To be tested
+    	    	PlacedVolume pv_det = detbox_vol.placeVolume(det_wide_layerbox_vol, Transform3D(rot_layers,Position(x_offset,y_offset,z_layer)));
     	    	pv_det.addPhysVolID("splitcal_layer", iz);
     		//z_layer += x_widebar.z()+x_passive_layer.z();
     		z_layer += x_widebar.z()/2.;
@@ -127,7 +128,8 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
 		//Place wide layer horizontally	
     		z_layer += x_widebar.z()/2.;
 		rot_layers = RotationZYX(0e0, 0e0, 0e0);
-    		PlacedVolume pv_det = detbox_vol.placeVolume(det_wide_layerbox_vol, Transform3D(rot_layers,Position(0,0,z_layer)));
+		//Order of offets To be tested
+    		PlacedVolume pv_det = detbox_vol.placeVolume(det_wide_layerbox_vol, Transform3D(rot_layers,Position(x_offset,y_offset,z_layer)));
         	pv_det.addPhysVolID("splitcal_layer", iz);
     		//z_layer += x_widebar.z()+x_passive_layer.z();
     		z_layer += x_widebar.z()/2.;
