@@ -54,8 +54,8 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
   
 //  box_vol.setVisAttributes(description.visAttributes(""));
 
-  Box    det_wide_layerbox(x_detbox.x()+tol, x_detbox.y()+tol, x_widebar.z()+tol);
-  Volume det_wide_layerbox_vol("ecal_det_wide_layerbox", det_wide_layerbox, description.air());
+  Box    det_wide_layerbox((x_detbox.x()+tol)/2., (x_detbox.y()+tol)/2., (x_widebar.z()+tol)/2.);
+  Volume det_wide_layerbox_vol("hcal_det_wide_layerbox", det_wide_layerbox, description.air());
   det_wide_layerbox_vol.setAttributes(description, x_detbox.regionStr(), x_detbox.limitsStr(), x_detbox.visStr());
   det_wide_layerbox_vol.setVisAttributes(description.visAttributes(x_detbox.visStr()));
   
@@ -63,7 +63,6 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
 //  Rotation3D rot(RotationZYX(0e0, 0e0, M_PI/2e0));
   Rotation3D rot(RotationZYX(0e0, 0e0, 0e0));
   
-  //if( x_widebar.hasChild(_U(sensitive)) )  {
    // sens.setType("calorimeter");
     widebar_vol.setSensitiveDetector(sens);
   //}
@@ -78,8 +77,9 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
   //int DetectorCode = 9 * 1e8;
   //int HCALCode = 2 * 1e7;
   
-  
-  double xpos = -x_detbox.x()/2.;
+  double wideboxwidth = x_widebar.x()*static_cast<double>(widebar_num_x);
+  double xpos = -(wideboxwidth+tol)/2.;
+   
   for( int ix=0; ix < widebar_num_x; ++ix )  {
     xpos += x_widebar.x()/2.;  
     PlacedVolume pv = det_wide_layerbox_vol.placeVolume(widebar_vol, Transform3D(rot,Position(xpos, 0e0, 0e0)));
@@ -90,7 +90,7 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
 
 
   //Loop for z-wide placement -> build the calorimeter sandwich
-  double z_layer =0.;
+  double z_layer = -x_detbox.z()/2.;
   Rotation3D rot_layers;
 
 

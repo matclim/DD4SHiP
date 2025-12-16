@@ -30,12 +30,12 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
   std::string  nam     = x_det.nameStr();
   //vertical bars by default
 //  const double splitlayer   =  x_det.attr<int>("splitlayer");
-  const double widebar_x_spacing   =  x_widebar.attr<double>("x_extra_spacing");
   const double thinbar_x_spacing   =  x_thinbar.attr<double>("x_extra_spacing");
+  const double x_offset   =  x_thinbar.attr<double>("x_offset");
+  const double y_offset   =  x_thinbar.attr<double>("y_offset");
   const double extrazgap   =  x_widebar.attr<double>("extrazgap");
   const std::string calo_layer_codes = x_det.attr<std::string>("layer_codes");
   const int num_z   =  static_cast<unsigned>(calo_layer_codes.size()); 
-  const int widebar_num_x   =  x_widebar.attr<unsigned>("num_x");
   const int thinbar_num_x   =  x_thinbar.attr<unsigned>("num_x");
 
   //HPL fibre feature extraction 
@@ -53,9 +53,6 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
   passive_layer_vol.setAttributes(description, x_passive_layer.regionStr(), x_passive_layer.limitsStr(), x_passive_layer.visStr());
   split_vol.setAttributes(description, x_split.regionStr(), x_split.limitsStr(), x_split.visStr());
 
-  //HPL definition
-   
-
 
   sens.setType("calorimeter");
 
@@ -65,8 +62,10 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
   detbox_vol.setAttributes(description, x_detbox.regionStr(), x_detbox.limitsStr(), x_detbox.visStr());
   
 //  box_vol.setVisAttributes(description.visAttributes(""));
+ 
+  double thinlayerwidth = x_thinbar.x() * static_cast<double>(thinbar_num_x);
 
-  Box    det_thin_layerbox((x_detbox.x()+tol)/2., (x_detbox.y()+tol)/2., (x_widebar.z()+tol)/2.);
+  Box    det_thin_layerbox((thinlayerwidth+tol)/2., (x_thinbar.y()+tol)/2., (x_thinbar.z()+tol)/2.);
   Volume det_thin_layerbox_vol("det_thin_layerbox", det_thin_layerbox, description.air());
   det_thin_layerbox_vol.setAttributes(description, x_detbox.regionStr(), x_detbox.limitsStr(), x_detbox.visStr());
   det_thin_layerbox_vol.setVisAttributes(description.visAttributes(x_detbox.visStr()));
@@ -94,7 +93,7 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
 
   //Thin bar layers
   int volumecode = 0;
-  double xpos = -x_detbox.x()/2.;
+  double xpos = -(thinlayerwidth+tol)/2.;
   for( int ix=0; ix < thinbar_num_x; ++ix )  {
     xpos += x_thinbar.x()/2.; 
     PlacedVolume pv = det_thin_layerbox_vol.placeVolume(thinbar_vol, Transform3D(rot,Position(xpos, 0e0, 0e0)));
@@ -137,7 +136,7 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
 		//Place thin layer vertically
     		z_layer += x_thinbar.z()/2.;
 	    	rot_layers = RotationZYX(M_PI/2e0,0e0,0e0);
-    	    	PlacedVolume pv_det = detbox_vol.placeVolume(det_thin_layerbox_vol, Transform3D(rot_layers,Position(0.,0. , z_layer)));
+    	    	PlacedVolume pv_det = detbox_vol.placeVolume(det_thin_layerbox_vol, Transform3D(rot_layers,Position(x_offset,y_offset , z_layer)));
     	    	pv_det.addPhysVolID("splitcal_layer", iz);
     		z_layer += x_thinbar.z()/2.;
     		//z_layer += x_thinbar.z()+x_passive_layer.z();
@@ -147,7 +146,7 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
 		//Place thin layer horizontally	
     		z_layer += x_thinbar.z()/2.;
 		rot_layers = RotationZYX(0e0, 0e0, 0e0);
-    		PlacedVolume pv_det = detbox_vol.placeVolume(det_thin_layerbox_vol, Transform3D(rot_layers,Position(0.,0. , z_layer)));
+    		PlacedVolume pv_det = detbox_vol.placeVolume(det_thin_layerbox_vol, Transform3D(rot_layers,Position(y_offset,x_offset, z_layer)));
         	pv_det.addPhysVolID("splitcal_layer", iz);
     		z_layer += x_thinbar.z()/2.;
     		//z_layer += x_thinbar.z()+x_passive_layer.z();
