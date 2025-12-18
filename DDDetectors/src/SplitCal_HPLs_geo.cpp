@@ -71,10 +71,11 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
   sens.setType("calorimeter");
 
   // Envelope: make envelope box 'tol' bigger on each side
-  Box    detbox((x_detbox.x()+tol)/2., (x_detbox.y()+tol)/2., (x_detbox.z()+tol)/2.);
-  Volume detbox_vol(nam, detbox, description.air());
-  detbox_vol.setAttributes(description, x_detbox.regionStr(), x_detbox.limitsStr(), x_detbox.visStr());
-  
+//  Box    detbox((x_detbox.x()+tol)/2., (x_detbox.y()+tol)/2., (x_detbox.z()+tol)/2.);
+//  Volume detbox_vol(nam, detbox, description.air());
+//  detbox_vol.setAttributes(description, x_detbox.regionStr(), x_detbox.limitsStr(), x_detbox.visStr());
+
+  Assembly detbox_vol(nam + "_assembly");
 
   Rotation3D rot(RotationZYX(0e0, 0e0, 0e0));
   
@@ -175,7 +176,7 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
 		z_layer += x_hplbox.z()/2.;
 	    	rot_layers = RotationZYX(M_PI/2e0,0e0,0e0);
     		PlacedVolume pv_det = detbox_vol.placeVolume(hplbox_vol, Transform3D(rot_layers,Position(0.,0. , z_layer)));
-        	pv_det.addPhysVolID("splitcal_layer", hplcount);
+        	pv_det.addPhysVolID("splitcal_HPL_layer", hplcount);
     		z_layer += x_hplbox.z()/2.;
 		hplcount ++;
 		break;
@@ -185,7 +186,7 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
 		z_layer += x_hplbox.z()/2.;
 	    	rot_layers = RotationZYX(0e0,0e0,0e0);
     		PlacedVolume pv_det = detbox_vol.placeVolume(hplbox_vol, Transform3D(rot_layers,Position(0.,0., z_layer)));
-        	pv_det.addPhysVolID("splitcal_layer",hplcount);
+        	pv_det.addPhysVolID("splitcal_HPL_layer",hplcount);
     		z_layer += x_hplbox.z()/2.;
 		hplcount ++;
 		break;

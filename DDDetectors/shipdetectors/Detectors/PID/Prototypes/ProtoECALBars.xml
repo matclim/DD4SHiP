@@ -17,7 +17,7 @@
       </material>
     </widebar>       
     <thinbar x="1*cm" y="2.16*m" z="1*cm" num_x="216" x_extra_spacing="0*cm" z_spacing="2.56*cm" extrazgap="0.5*cm" vis="SplitCalThinSensitiveVis">
-      <material name = "PVT" sensitive = "true">
+      <material name = "Polysterene" sensitive = "true">
       </material>
     </thinbar>       
     <hplbox x="2.16*m" y="2.16*m" z="1*cm" extrazgap="0*cm" vis="SplitCalHPLVis">
@@ -45,8 +45,8 @@
     <rotation x="0" y="0" z="0">
     </rotation>
   </detector>
-  <detector id=1 name="SplitCalTest_Thin" type="DD4hep_SplitCalThinBars" reflect="true" readout="SplitCalThinBarHits" vis="SplitCalVis" calorimeterType="EM" layer_codes="74777777177777477777727777747777771777774777777287777747777771777774777777277777477777717777747777772777774" hpln_fibre_layers="3">
-    <comment>SplitCal test</comment>
+  <detector id=1 name="SplitCalProto_Thin" type="DD4hep_SplitCalThinBars" reflect="true" readout="SplitCalThinBarHits" vis="SplitCalVis" calorimeterType="EM" layer_codes="74777777177777477777727777747777771777774777777287777747777771777774777777277777477777717777747777772777774" hpln_fibre_layers="3">
+    <comment>SplitCal prototype May 2024</comment>
     <box x="56*cm" y="56*cm" z="1.2*m" repeat="1" vis="Debugbox" >
     </box>      
     <widebar x="6*cm" y="2.16*m" z="1*cm" num_x="36" x_extra_spacing="0*cm" z_spacing="2.56*cm" extrazgap="0.5*cm" vis="SplitCalWideSensitiveVis" >
@@ -54,7 +54,7 @@
       </material>
     </widebar>       
     <thinbar x="1*cm" y="20*cm" z="1*cm" num_x="20" x_extra_spacing="0*cm" z_spacing="2.56*cm" extrazgap="0.5*cm" x_offset="0*cm" y_offset="0*cm" vis="SplitCalThinSensitiveVis">
-      <material name = "PVT" sensitive = "true">
+      <material name = "Polysterene" sensitive = "true">
       </material>
     </thinbar>       
     <hplbox x="2.16*m" y="2.16*m" z="1*cm" extrazgap="0*cm" vis="SplitCalHPLVis">

@@ -57,9 +57,12 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
   sens.setType("calorimeter");
 
   // Envelope: make envelope box 'tol' bigger on each side
-  Box    detbox((x_detbox.x()+tol)/2., (x_detbox.y()+tol)/2., (x_detbox.z()+tol)/2.);
-  Volume detbox_vol(nam, detbox, description.air());
-  detbox_vol.setAttributes(description, x_detbox.regionStr(), x_detbox.limitsStr(), x_detbox.visStr());
+  
+  Assembly detbox_vol(nam + "_assembly");
+  
+  //Box    detbox((x_detbox.x()+tol)/2., (x_detbox.y()+tol)/2., (x_detbox.z()+tol)/2.);
+  //Volume detbox_vol(nam, detbox, description.air());
+  //detbox_vol.setAttributes(description, x_detbox.regionStr(), x_detbox.limitsStr(), x_detbox.visStr());
   
 //  box_vol.setVisAttributes(description.visAttributes(""));
  
@@ -97,7 +100,7 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
   for( int ix=0; ix < thinbar_num_x; ++ix )  {
     xpos += x_thinbar.x()/2.; 
     PlacedVolume pv = det_thin_layerbox_vol.placeVolume(thinbar_vol, Transform3D(rot,Position(xpos, 0e0, 0e0)));
-    pv.addPhysVolID("splitcal_bar", volumecode);
+    pv.addPhysVolID("splitcal_thin_bar", volumecode);
     xpos += x_thinbar.x()/2. + thinbar_x_spacing; 
     volumecode++;
   }
@@ -137,7 +140,7 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
     		z_layer += x_thinbar.z()/2.;
 	    	rot_layers = RotationZYX(M_PI/2e0,0e0,0e0);
     	    	PlacedVolume pv_det = detbox_vol.placeVolume(det_thin_layerbox_vol, Transform3D(rot_layers,Position(x_offset,y_offset , z_layer)));
-    	    	pv_det.addPhysVolID("splitcal_layer", iz);
+    	    	pv_det.addPhysVolID("splitcal_thin_layer", iz);
     		z_layer += x_thinbar.z()/2.;
     		//z_layer += x_thinbar.z()+x_passive_layer.z();
    		break;
@@ -147,7 +150,7 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
     		z_layer += x_thinbar.z()/2.;
 		rot_layers = RotationZYX(0e0, 0e0, 0e0);
     		PlacedVolume pv_det = detbox_vol.placeVolume(det_thin_layerbox_vol, Transform3D(rot_layers,Position(y_offset,x_offset, z_layer)));
-        	pv_det.addPhysVolID("splitcal_layer", iz);
+        	pv_det.addPhysVolID("splitcal_thin_layer", iz);
     		z_layer += x_thinbar.z()/2.;
     		//z_layer += x_thinbar.z()+x_passive_layer.z();
 		break;
