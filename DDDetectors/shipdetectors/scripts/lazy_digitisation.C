@@ -239,6 +239,8 @@ void lazy_digitisation(TString infile) {
     std::vector<UShort_t> v_bars_hcal;
     std::vector<Double_t> v_n_mips_hcal;
 
+    TString ftitle = infile;
+    TFile *f_out = new TFile(ftitle.Remove(ftitle.Length()-5)+"_ldigi.root","RECREATE");
     TTree *t_out = new TTree("lazy_digitised_events","Lazy diitisation of prototype calorimeter simulation events");
 
 	
@@ -257,9 +259,7 @@ void lazy_digitisation(TString infile) {
     t_out->Branch("n_mips_hcal",&v_n_mips_hcal);
 
 
-    TString ftitle = infile;
 
-//    f_out = new TFile(ftitle.Remove(ftitle.Length()-5)+"_out.root");
 
     for (int ev = 0;ev < nEvents; ev++) {
         tree->GetEntry(ev);
@@ -299,7 +299,6 @@ void lazy_digitisation(TString infile) {
             double y = hit->position.Y();
             double z = hit->position.Z();
 
-    	   cout << "Tz " << z << endl;	    
 
     	    //int layer = DecodeLayer(z);	
 
@@ -330,7 +329,6 @@ void lazy_digitisation(TString infile) {
             double y = hit->position.Y();
             double z = hit->position.Z();
     	   
-	    cout << "Hz " << z << endl;	    
 	
 
     	    //int layer = DecodeLayer(z);	
@@ -405,9 +403,6 @@ void lazy_digitisation(TString infile) {
     //TCanvas *chy_tz = new TCanvas("chy_tz","chy_tz",800,600);
     //h_hy_tz->Draw("COLZ");
 
-
-    ROOT::RDataFrame df(*t_out);
-
-
-    df.Snapshot("df_lazy_sim_proto_DD4SHiP",ftitle.Remove(ftitle.Length()-5)+"_out.root");
+    f_out->WriteTObject(t_out);
+    f_out->Close();
 }
