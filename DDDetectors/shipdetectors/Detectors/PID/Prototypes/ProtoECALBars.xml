@@ -8,7 +8,7 @@
 <!-- ====================================================================== -->
 
 <detectors>
-  <detector id=0 name="SplitCalTest_Base_and_wide_bars" type="DD4hep_SplitCalWideBars_and_Basis" reflect="true" readout="SplitCalWideBarHits" vis="SplitCalVis" calorimeterType="EM" layer_codes="74777777177777477777727777747777771777774777777287777747777771777774777777277777477777717777747777772777774" hpln_fibre_layers="0">
+  <detector id=0 name="SplitCalTest_Base_and_wide_bars" type="DD4hep_SplitCalWideBars_and_Basis" reflect="true" readout="SplitCalWideBarHits" vis="InvisibleWithDaughters" calorimeterType="EM" layer_codes="74777777177777477777727777747777771777774777777287777747777771777774777777277777477777717777747777772777774" hpln_fibre_layers="0">
     <comment>SplitCal test</comment>
     <box x="56*cm" y="56*cm" z="1.2*m" repeat="1" vis="Debugbox" >
     </box>      
@@ -32,7 +32,7 @@
       <material name = "Polysterene" sensitive = "true">
       </material>
     </hplcore>       
-    <passive_layer x="56*cm" y="56*cm" z="0.4*cm" vis="SplitCalPassiveVis" >
+    <passive_layer x="56*cm" y="56*cm" z="0.4*cm" extrazgap="0.5*cm" bars_on_plates="1" vis="SplitCalPassiveVis" >
       <material name = "IronPlate" sensitive = "false">
       </material>
     </passive_layer>       
@@ -69,7 +69,7 @@
       <material name = "Polysterene" sensitive = "true">
       </material>
     </hplcore>       
-    <passive_layer x="2.16*m" y="2.16*m" z="0.4*cm" vis="SplitCalPassiveVis" >
+    <passive_layer x="2.16*m" y="2.16*m" z="0.4*cm" extrazgap="0.5*cm" bars_on_plates="1" vis="SplitCalPassiveVis" >
       <material name = "IronPlate" sensitive = "false">
       </material>
     </passive_layer>       

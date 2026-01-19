@@ -28,11 +28,12 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
   std::string  nam     = x_det.nameStr();
   //vertical bars by default
   const double widebar_x_spacing   =  x_widebar.attr<double>("x_extra_spacing");
-  const double extrazgap   =  x_widebar.attr<double>("extrazgap");
+  const double extrazgap_scint   =  x_widebar.attr<double>("extrazgap");
+  const double extrazgap_passive   =  x_passive_layer.attr<double>("extrazgap");
   const std::string calo_layer_codes = x_det.attr<std::string>("layer_codes");
   const int num_z   =  static_cast<unsigned>(calo_layer_codes.size()); 
   const int widebar_num_x   =  x_widebar.attr<unsigned>("num_x");
-
+  const bool bars_on_plates   =  x_passive_layer.attr<double>("bars_on_plates");
   
   //Bar definition
   Box   widebar((x_widebar.x()-tol)/2., (x_widebar.y()-tol)/2.,(x_widebar.z()-tol)/2.);
@@ -111,6 +112,7 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
     	    	pv_det.addPhysVolID("hcal_layer", iz);
     		//z_layer += x_widebar.z()+x_passive_layer.z();
     		z_layer += x_widebar.z()/2.;
+	  	z_layer += extrazgap_scint;
    		break;
 	    }
 	    case 2:{
@@ -122,7 +124,8 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
     	    	pv_det.addPhysVolID("hcal_layer", iz);
     		//z_layer += x_widebar.z()+x_passive_layer.z();
     		z_layer += x_widebar.z()/2.;
-	  	break; 
+	  	z_layer += extrazgap_scint;
+		break; 
 	    }
 	    case 7:{
     		z_layer += x_passive_layer.z()/2.;
@@ -130,8 +133,8 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
     		PlacedVolume pv_passive = detbox_vol.placeVolume(passive_layer_vol,Transform3D(rot_layers,Position(0., 0. , z_layer)));
     		z_layer += x_passive_layer.z()/2.;
     		pv_passive.addPhysVolID("hcal_passivelayer", iz);
-    		z_layer += extrazgap;
-	  	break; 
+    		if(bars_on_plates && (static_cast<int>(calo_layer_codes[iz+1]) - '0')==7) z_layer += extrazgap_passive;
+		break; 
 	    }
     }
     std::cout << "Zlayer Det " << z_layer << std::endl;

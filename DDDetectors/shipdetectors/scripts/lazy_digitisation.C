@@ -339,8 +339,8 @@ void lazy_digitisation(TString infile) {
 	    h_hx_tz->Fill(x,z);
 	    h_hy_tz->Fill(y,z);
 	    
-	    UShort_t layer = DecodeLayerSplitCALThin(z);
-    	    UShort_t bar   = DecodeBarThin(y,layer);
+	    UShort_t layer = DecodeLayerHCAL(z);
+    	    UShort_t bar   = DecodeBarHCAL(y,layer);
 	    Double_t n_mips = energy / calibration_wide;
 
     	    v_layers_hcal.push_back(layer);	    

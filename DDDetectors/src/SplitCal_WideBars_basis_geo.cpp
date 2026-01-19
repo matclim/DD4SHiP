@@ -33,7 +33,10 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
   const double x_offset = x_widebar.attr<double>("x_offset");
   const double y_offset = x_widebar.attr<double>("y_offset");
   const double widebar_x_spacing   =  x_widebar.attr<double>("x_extra_spacing");
-  const double extrazgap   =  x_widebar.attr<double>("extrazgap");
+  const double extrazgap_widebars   =  x_widebar.attr<double>("extrazgap");
+  const double extrazgap_thinbars   =  x_thinbar.attr<double>("extrazgap");
+  const double extrazgap_passive   =  x_passive_layer.attr<double>("extrazgap");
+  const bool bars_on_plates   =  x_passive_layer.attr<double>("bars_on_plates");
   const std::string calo_layer_codes = x_det.attr<std::string>("layer_codes");
   const int num_z   =  static_cast<unsigned>(calo_layer_codes.size()); 
   const int widebar_num_x   =  x_widebar.attr<unsigned>("num_x");
@@ -124,6 +127,7 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
     	    	pv_det.addPhysVolID("splitcal_wide_layer", iz);
     		//z_layer += x_widebar.z()+x_passive_layer.z();
     		z_layer += x_widebar.z()/2.;
+		z_layer += extrazgap_widebars;
    		break;
 	    }
 	    case 2:{
@@ -135,16 +139,19 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
         	pv_det.addPhysVolID("splitcal_wide_layer", iz);
     		//z_layer += x_widebar.z()+x_passive_layer.z();
     		z_layer += x_widebar.z()/2.;
+		z_layer += extrazgap_widebars;
 	  	break; 
 	    }
 	    case 3:{
 		//Leave space for thin bars
     		z_layer += x_thinbar.z();
+		z_layer += extrazgap_thinbars;
    		break;
             }
 	    case 4:{
 		//Leave space for thin bars
     		z_layer += x_thinbar.z();
+		z_layer += extrazgap_thinbars;
 		break;
             }
 	    case 5:{
@@ -160,9 +167,9 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
 	    case 7:{//Place passive layer
     		z_layer += x_passive_layer.z()/2.;
     		PlacedVolume pv_passive = detbox_vol.placeVolume(passive_layer_vol,Transform3D(rot_layers,Position(0.,0., z_layer)));
-    		pv_passive.addPhysVolID("splitcal_passivelayer", iz);
+		pv_passive.addPhysVolID("splitcal_passivelayer", iz);
     		z_layer += x_passive_layer.z()/2.;
-    		z_layer += extrazgap;
+    		if(bars_on_plates && (static_cast<int>(calo_layer_codes[iz+1]) - '0')==7) z_layer += extrazgap_passive;
 		break;
 		   }
 	    case 8:{//Place split

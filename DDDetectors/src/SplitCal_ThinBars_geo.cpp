@@ -33,7 +33,10 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
   const double thinbar_x_spacing   =  x_thinbar.attr<double>("x_extra_spacing");
   const double x_offset   =  x_thinbar.attr<double>("x_offset");
   const double y_offset   =  x_thinbar.attr<double>("y_offset");
-  const double extrazgap   =  x_widebar.attr<double>("extrazgap");
+  const double extrazgap_widebars   =  x_widebar.attr<double>("extrazgap");
+  const double extrazgap_thinbars   =  x_thinbar.attr<double>("extrazgap");
+  const double extrazgap_passive   =  x_passive_layer.attr<double>("extrazgap");
+  const bool bars_on_plates   =  x_passive_layer.attr<double>("bars_on_plates");
   const std::string calo_layer_codes = x_det.attr<std::string>("layer_codes");
   const int num_z   =  static_cast<unsigned>(calo_layer_codes.size()); 
   const int thinbar_num_x   =  x_thinbar.attr<unsigned>("num_x");
@@ -128,11 +131,13 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
 	    case 1:{
 		//Leave space for wide bars
     		z_layer += x_widebar.z();
+    		z_layer += extrazgap_widebars;
    		break;
 	    }
 	    case 2:{
 		//Leave space for wide bars
     		z_layer += x_widebar.z();
+    		z_layer += extrazgap_widebars;
    		break;
 	    }
 	    case 3:{
@@ -142,6 +147,7 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
     	    	PlacedVolume pv_det = detbox_vol.placeVolume(det_thin_layerbox_vol, Transform3D(rot_layers,Position(x_offset,y_offset , z_layer)));
     	    	pv_det.addPhysVolID("splitcal_thin_layer", iz);
     		z_layer += x_thinbar.z()/2.;
+    		z_layer += extrazgap_thinbars;
     		//z_layer += x_thinbar.z()+x_passive_layer.z();
    		break;
             }
@@ -152,6 +158,7 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
     		PlacedVolume pv_det = detbox_vol.placeVolume(det_thin_layerbox_vol, Transform3D(rot_layers,Position(y_offset,x_offset, z_layer)));
         	pv_det.addPhysVolID("splitcal_thin_layer", iz);
     		z_layer += x_thinbar.z()/2.;
+    		z_layer += extrazgap_thinbars;
     		//z_layer += x_thinbar.z()+x_passive_layer.z();
 		break;
             }
@@ -168,7 +175,7 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
 	    case 7:{
 		//Leave space for passive layers
     		z_layer += x_passive_layer.z();
-    		z_layer += extrazgap;
+    		if(bars_on_plates && (static_cast<int>(calo_layer_codes[iz+1]) - '0') ==7)  z_layer += extrazgap_passive;
 		break;
 		   }
 	    case 8:{
